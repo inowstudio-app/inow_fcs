@@ -11,3 +11,9 @@ venv/
 .claude/
 tools/
 README.md
+# but DO include the reference books needed at runtime (override *.pdf / *.db above)
+!data/books/neufert.pdf
+!data/books/architects_data.pdf
+!data/books/books.db
+!data/books/books_index.json
+data/books/cache/

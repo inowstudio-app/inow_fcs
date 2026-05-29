@@ -16,3 +16,12 @@ venv/
 Thumbs.db
 # Local-only Claude tooling config
 .claude/
+
+# --- Reference books (Neufert Data feature): ship these despite the *.pdf / *.db rules ---
+# Team-only deployment needs the PDFs (page rendering), the FTS db, and the topic index.
+!data/books/neufert.pdf
+!data/books/architects_data.pdf
+!data/books/books.db
+!data/books/books_index.json
+# but NOT the regenerable rendered-page image cache
+data/books/cache/

@@ -15,6 +15,9 @@ RUN pip install --no-cache-dir -r backend/requirements.txt
 COPY backend backend
 COPY frontend frontend
 COPY data/rules data/rules
+# Reference books (Neufert + Architect's Data): PDFs for page rendering, FTS db, topic index.
+# Team-only deployment; page-image cache (data/books/cache) is regenerated at runtime.
+COPY data/books data/books
 
 ENV PYTHONUNBUFFERED=1
 # DB on a persistent disk if the host provides one (see render.yaml). Falls back to /app/data.
