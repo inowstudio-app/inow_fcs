@@ -54,8 +54,10 @@ $("#logoutBtn").addEventListener("click", async () => {
   location.reload();
 });
 $("#resetBtn").addEventListener("click", () => {
-  ["survey_no", "village", "area_sqm", "width_m", "depth_m", "abutting_road_width_m"].forEach(n => form[n].value = "");
-  form.polygon.value = ""; form.parking_area_class.value = "";
+  ["survey_no", "village", "area_sqm", "side_n", "side_e", "side_s", "side_w"].forEach(n => form[n].value = "");
+  form.polygon.value = ""; form.parking_area_class.value = ""; form.district.value = ""; form.plot_type.value = "individual";
+  ["n", "e", "s", "w"].forEach(d => { $("#road_" + d).checked = false; $("#roadw_" + d).value = ""; $("#roadw_" + d).disabled = true; });
+  AREA_MANUAL = false; $("#frontNote").textContent = "";
   $("#fmbExtract").hidden = true; $("#fmbPreviewWrap").hidden = true;
   $("#fmbStatus").textContent = "Optional — auto-extracts cadastral details & dimensions.";
   document.querySelectorAll(".need").forEach(e => e.classList.remove("need"));
@@ -150,29 +152,82 @@ function showCanvas(inner, label) {
 }
 function escapeHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
+// ===== district dropdown =====
+const TN_DISTRICTS = ["Ariyalur","Chengalpattu","Chennai","Coimbatore","Cuddalore","Dharmapuri","Dindigul","Erode","Kallakurichi","Kancheepuram","Kanniyakumari","Karur","Krishnagiri","Madurai","Mayiladuthurai","Nagapattinam","Namakkal","Nilgiris","Perambalur","Pudukkottai","Ramanathapuram","Ranipet","Salem","Sivaganga","Tenkasi","Thanjavur","Theni","Thoothukudi","Tiruchirappalli","Tirunelveli","Tirupathur","Tiruppur","Tiruvallur","Tiruvannamalai","Tiruvarur","Vellore","Viluppuram","Virudhunagar"];
+(function () { const s = $("#districtSel"); TN_DISTRICTS.forEach(d => { const o = document.createElement("option"); o.value = d; o.textContent = d; s.appendChild(o); }); })();
+
+// ===== road sides + auto-area =====
+let AREA_MANUAL = false;
+const SIDE_NAMES = { N: "North", E: "East", S: "South", W: "West" };
+["n", "e", "s", "w"].forEach(d => {
+  $("#road_" + d).addEventListener("change", (e) => {
+    $("#roadw_" + d).disabled = !e.target.checked;
+    if (!e.target.checked) $("#roadw_" + d).value = "";
+    updateFrontNote();
+  });
+  $("#roadw_" + d).addEventListener("input", updateFrontNote);
+});
+["side_n", "side_e", "side_s", "side_w"].forEach(n => form[n].addEventListener("input", recalcArea));
+form.area_sqm.addEventListener("input", () => { AREA_MANUAL = form.area_sqm.value !== ""; });
+
+function collectRoads() {           // -> { N: widthMetres, ... }
+  const r = {};
+  ["n", "e", "s", "w"].forEach(d => {
+    if ($("#road_" + d).checked) { const v = +$("#roadw_" + d).value; if (v > 0) r[d.toUpperCase()] = toM(v, "len"); }
+  });
+  return r;
+}
+function updateFrontNote() {
+  const roads = collectRoads(), ks = Object.keys(roads);
+  if (!ks.length) { $("#frontNote").textContent = ""; return; }
+  let front = null, w = 0;
+  for (const [s, ww] of Object.entries(roads)) if (ww > w) { w = ww; front = s; }
+  $("#frontNote").textContent = `Front = ${SIDE_NAMES[front]} side (widest road, ${fmtLen(w)}).`
+    + (ks.length > 1 ? " Other road sides take side/rear setback." : "");
+}
+function avgPos(a, b) { const v = [a, b].filter(x => x > 0); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : 0; }
+function recalcArea() {
+  if (AREA_MANUAL) return;
+  const wd = avgPos(+form.side_n.value, +form.side_s.value), dp = avgPos(+form.side_e.value, +form.side_w.value);
+  if (wd > 0 && dp > 0) form.area_sqm.value = roundU(wd * dp, "area");  // sides & area share the display unit
+}
+
 // ===== gather plot inputs (convert to metres) =====
 function plotBody() {
-  const g = n => form[n].value;
-  const b = { parking_area_class: form.parking_area_class.value };
+  const g = n => (form[n] ? form[n].value : "");
+  const b = { plot_type: form.plot_type.value, parking_area_class: form.parking_area_class.value };
   if (g("survey_no")) b.survey_no = g("survey_no");
   if (g("village")) b.village = g("village");
-  b.area_sqm = toM(+g("area_sqm"), "area");
-  b.width_m = toM(+g("width_m"), "len");
-  b.depth_m = toM(+g("depth_m"), "len");
-  b.abutting_road_width_m = toM(+g("abutting_road_width_m"), "len");
-  const poly = form.polygon.value.trim();   // textarea is always metres
+  if (g("district")) b.district = g("district");
+  const N = toM(+g("side_n"), "len"), E = toM(+g("side_e"), "len"), S = toM(+g("side_s"), "len"), Wd = toM(+g("side_w"), "len");
+  const width = avgPos(N, S), depth = avgPos(E, Wd);    // metres
+  let area = toM(+g("area_sqm"), "area");
+  if (!area && width && depth) area = width * depth;
+  b.area_sqm = area || width * depth || 0;
+  b.width_m = width || Math.sqrt(area || 0);
+  b.depth_m = depth || Math.sqrt(area || 0);
+  const roads = collectRoads();
+  b.road_sides = roads;
+  let widest = 0, front = null;
+  for (const [s, w] of Object.entries(roads)) if (w > widest) { widest = w; front = s; }
+  b.abutting_road_width_m = widest;
+  b.front_edge_idx = ({ S: 0, E: 1, N: 2, W: 3 })[front] ?? 0;
+  const poly = form.polygon.value.trim();
   if (poly) {
     const pts = poly.split(/\n+/).map(l => l.split(",").map(Number)).filter(p => p.length === 2 && !p.some(isNaN));
     if (pts.length >= 3) b.polygon = pts;
   }
   return b;
 }
-
-form.abutting_road_width_m.addEventListener("input", (e) => { if (e.target.value) e.target.classList.remove("need"); });
+function setLen(name, metres) { form[name].value = roundU(convertVal(metres, "len", "m", U), "len"); }
 
 function validPlot(b) {
-  if (!(b.area_sqm > 0 && b.width_m > 0 && b.depth_m > 0 && b.abutting_road_width_m > 0)) {
-    alert("Please fill in plot Area, Frontage, Depth and Abutting road width.");
+  if (!(b.area_sqm > 0 && b.width_m > 0 && b.depth_m > 0)) {
+    alert("Please enter the plot sides (or the area).");
+    return false;
+  }
+  if (!(b.abutting_road_width_m > 0)) {
+    alert("Please tick at least one abutting road and enter its width.");
     return false;
   }
   return true;
@@ -221,20 +276,25 @@ $("#fmbFile").addEventListener("change", async (e) => {
     const p = d.parsed, det = d.detected || {};
     if (det.survey_no) form.survey_no.value = p.survey_no;
     if (det.village) form.village.value = p.village;
-    if (det.area_sqm) form.area_sqm.value = roundU(convertVal(p.area_sqm, "area", "m", U), "area");
-    if (det.width_m) form.width_m.value = roundU(convertVal(p.width_m, "len", "m", U), "len");
-    if (det.depth_m) form.depth_m.value = roundU(convertVal(p.depth_m, "len", "m", U), "len");
+    if (p.district && TN_DISTRICTS.includes(p.district)) form.district.value = p.district;
+    if (p.dimensions && p.dimensions.length >= 4) {
+      const ds = [...p.dimensions].sort((a, b) => a - b);
+      setLen("side_n", ds[0]); setLen("side_s", ds[1]); setLen("side_e", ds[2]); setLen("side_w", ds[3]);
+    } else if (det.width_m && det.depth_m) {
+      setLen("side_n", p.width_m); setLen("side_s", p.width_m); setLen("side_e", p.depth_m); setLen("side_w", p.depth_m);
+    }
+    if (det.area_sqm) { form.area_sqm.value = roundU(convertVal(p.area_sqm, "area", "m", U), "area"); AREA_MANUAL = true; }
 
-    const filled = Object.keys(det).filter(k => det[k]).map(k => FMB_LABELS[k] || k);
-    const miss = (d.missing || []).map(k => FMB_LABELS[k] || k);
+    const filledKeys = ["survey_no", "village", "area_sqm"].filter(k => det[k]);
+    const filled = filledKeys.map(k => FMB_LABELS[k]);
+    if (p.dimensions && p.dimensions.length) filled.push("Plot sides");
+    const miss = (d.missing || []).filter(k => !["width_m", "depth_m"].includes(k)).map(k => FMB_LABELS[k] || k);
     const dimsTxt = (p.dimensions && p.dimensions.length)
-      ? `<div class="ex-dim">Detected edge lengths: ${p.dimensions.join(", ")} m — Frontage/Depth set to smallest/largest; adjust if needed.</div>` : "";
+      ? `<div class="ex-dim">Detected edge lengths: ${p.dimensions.join(", ")} m → filled into the 4 sides (adjust which side is which if needed).</div>` : "";
     $("#fmbExtract").hidden = false;
     $("#fmbExtract").innerHTML =
       `<div class="ex-ok">✓ Auto-filled: ${filled.join(", ") || "none"}</div>` +
       (miss.length ? `<div class="ex-miss">⚠ Not on the FMB — please enter: ${miss.join(", ")}</div>` : "") + dimsTxt;
-    // highlight the road-width field that always needs manual entry
-    const rw = form.abutting_road_width_m; rw.classList.toggle("need", !rw.value);
     $("#fmbStatus").textContent = d.method === "ocr" ? "Read via OCR." : d.method === "text" ? "Read from PDF text." : "Could not read text — enter manually.";
   } catch (err) { $("#fmbStatus").textContent = "Could not read FMB: " + err.message; }
 });
@@ -383,6 +443,9 @@ function renderFeasibility() {
       <div class="sc-sub">max built-up · FSI ${s.fsi}</div>
       <div class="sc-row"><span>${s.floors} fl</span><span>${u}</span><span>${s.parking.car_spaces} cars</span></div></div>`;
   }).join("");
+  let sn = document.getElementById("siteNotes");
+  if (!sn) { sn = document.createElement("div"); sn.id = "siteNotes"; $("#scenarioCards").after(sn); }
+  sn.innerHTML = (LAST.site_notes || []).map(n => `<div class="advis">ⓘ ${n}</div>`).join("");
   document.querySelectorAll(".scard[data-idx]").forEach(el => el.addEventListener("click", () => selectScenario(+el.dataset.idx)));
   const ri = LAST.scenarios.findIndex(s => s.scenario === LAST.recommended);
   selectScenario(ri >= 0 ? ri : LAST.scenarios.findIndex(s => s.feasible));
@@ -445,9 +508,16 @@ async function loadProjects() {
 async function openProject(id) {
   const p = await (await fetch("/api/projects/" + id)).json();
   const i = p.inputs;
-  if (i.area_sqm != null) form.area_sqm.value = roundU(convertVal(i.area_sqm, "area", "m", U), "area");
-  ["width_m", "depth_m", "abutting_road_width_m"].forEach(k => { if (i[k] != null) form[k].value = roundU(convertVal(i[k], "len", "m", U), "len"); });
+  if (i.area_sqm != null) { form.area_sqm.value = roundU(convertVal(i.area_sqm, "area", "m", U), "area"); AREA_MANUAL = true; }
+  if (i.width_m) { setLen("side_n", i.width_m); setLen("side_s", i.width_m); }
+  if (i.depth_m) { setLen("side_e", i.depth_m); setLen("side_w", i.depth_m); }
   ["survey_no", "village"].forEach(k => { if (i[k] != null) form[k].value = i[k]; });
+  if (i.district) form.district.value = i.district;
+  if (i.plot_type) form.plot_type.value = i.plot_type;
+  if (i.road_sides) Object.entries(i.road_sides).forEach(([s, w]) => {
+    const d = s.toLowerCase(); if ($("#road_" + d)) { $("#road_" + d).checked = true; $("#roadw_" + d).disabled = false; $("#roadw_" + d).value = roundU(convertVal(w, "len", "m", U), "len"); }
+  });
+  updateFrontNote();
   if (p.kind === "feasibility") { LAST = p.result; LAST.inputs = i; document.querySelector('.tab[data-view="feasibility"]').click(); renderFeasibility(); }
   else { LASTC = p.result; LASTC.inputs = i; document.querySelector('.tab[data-view="compliance"]').click(); renderCompliance(); }
 }

@@ -58,12 +58,23 @@ def run_scenarios(plot: Plot) -> dict:
 
     feasible = [r for r in results if r["feasible"]]
     recommended = max(feasible, key=lambda r: r["max_built_up_sqm"])["scenario"] if feasible else None
+
+    site_notes = []
+    rs = plot.road_sides or {}
+    if len([w for w in rs.values() if w]) > 1:
+        widest = max(rs.items(), key=lambda kv: kv[1] or 0)
+        site_notes.append(f"Corner/multi-road plot: front setback taken from the widest road ({widest[0]} side, "
+                          f"{widest[1]} m); other road sides take side/rear setback (Rule 35 Expl.2(iv)).")
+    if plot.plot_type == "gated":
+        site_notes.append("Gated / approved-layout plot: roads & OSR are handled at the layout level; "
+                          "individual-plot setbacks per Rule 35 still apply unless the sanctioned layout specifies otherwise.")
     return {
         "plot": {"area_sqm": plot.area_sqm, "width_m": plot.width_m, "depth_m": plot.depth_m,
                  "abutting_road_width_m": plot.abutting_road_width_m, "survey_no": plot.survey_no},
         "scenarios": results,
         "recommended": recommended,
         "assumptions": {"avg_dwelling_unit_sqm": AVG_UNIT_SQM},
+        "site_notes": site_notes,
         "amendments": amendments.status(),
         "pending": ["Use-zone schedules", "Rule 47 layout/sub-division",
                     "Older scanned amendments pending OCR: " + (", ".join(amendments.status()["pending_review"]) or "none")],

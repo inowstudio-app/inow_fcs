@@ -58,6 +58,9 @@ class Plot:
     village: str | None = None
     polygon: list | None = None      # optional explicit corner points [[x,y],...] in metres
     front_edge_idx: int = 0          # which polygon edge abuts the road
+    plot_type: str = "individual"    # individual | gated (approved-layout)
+    district: str | None = None      # for location-specific rules (Build B)
+    road_sides: dict | None = None   # {"N":width,"E":width,...} abutting roads (for report)
 
 
 def _pick(bands, value, key, out):

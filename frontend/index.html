@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DCR Feasibility System — Tamil Nadu</title>
-  <link rel="stylesheet" href="style.css?v=15" />
+  <link rel="stylesheet" href="style.css?v=16" />
 </head>
 <body>
   <header class="no-print">
@@ -44,13 +44,8 @@
           <label>Survey No <input name="survey_no" placeholder="e.g. 77/1B2" /></label>
           <label>Village <input name="village" placeholder="village name" /></label>
         </div>
-        <div class="grid3">
-          <label>Area <span class="u" data-ulabel="area"></span> <input name="area_sqm" data-u="area" type="number" step="0.01" placeholder="0" /></label>
-          <label>Frontage <span class="u" data-ulabel="len"></span> <input name="width_m" data-u="len" type="number" step="0.01" placeholder="0" /></label>
-          <label>Depth <span class="u" data-ulabel="len"></span> <input name="depth_m" data-u="len" type="number" step="0.01" placeholder="0" /></label>
-        </div>
         <div class="grid2">
-          <label>Abutting road width <span class="u" data-ulabel="len"></span> <input name="abutting_road_width_m" data-u="len" type="number" step="0.1" placeholder="0" /></label>
+          <label>District <select name="district" id="districtSel"><option value="">— select —</option></select></label>
           <label>Planning authority
             <select name="parking_area_class">
               <option value="">— select —</option>
@@ -60,9 +55,40 @@
             </select>
           </label>
         </div>
+
+        <h3 class="sec">Plot sides <span class="u" data-ulabel="len"></span> <span class="hint">— area auto-calculates</span></h3>
+        <div class="grid4">
+          <label>North <input name="side_n" data-u="len" type="number" step="0.01" placeholder="0" class="side" /></label>
+          <label>East <input name="side_e" data-u="len" type="number" step="0.01" placeholder="0" class="side" /></label>
+          <label>South <input name="side_s" data-u="len" type="number" step="0.01" placeholder="0" class="side" /></label>
+          <label>West <input name="side_w" data-u="len" type="number" step="0.01" placeholder="0" class="side" /></label>
+        </div>
+        <label>Plot area <span class="u" data-ulabel="area"></span> <span class="hint">(auto — edit to override)</span>
+          <input name="area_sqm" data-u="area" type="number" step="0.01" placeholder="0" /></label>
+
+        <h3 class="sec">Abutting road(s) <span class="hint">— tick each side with a road</span></h3>
+        <div class="roads">
+          <div class="road-row"><label class="ck"><input type="checkbox" id="road_n" data-side="n" /> North</label>
+            <input id="roadw_n" data-u="len" type="number" step="0.1" placeholder="width" disabled /></div>
+          <div class="road-row"><label class="ck"><input type="checkbox" id="road_e" data-side="e" /> East</label>
+            <input id="roadw_e" data-u="len" type="number" step="0.1" placeholder="width" disabled /></div>
+          <div class="road-row"><label class="ck"><input type="checkbox" id="road_s" data-side="s" /> South</label>
+            <input id="roadw_s" data-u="len" type="number" step="0.1" placeholder="width" disabled /></div>
+          <div class="road-row"><label class="ck"><input type="checkbox" id="road_w" data-side="w" /> West</label>
+            <input id="roadw_w" data-u="len" type="number" step="0.1" placeholder="width" disabled /></div>
+        </div>
+        <p class="hint" id="frontNote"></p>
+
+        <label>Plot type
+          <select name="plot_type">
+            <option value="individual">Individual plot</option>
+            <option value="gated">Gated community / approved layout</option>
+          </select>
+        </label>
+
         <details class="adv">
           <summary>Exact plot shape (optional)</summary>
-          <label class="hint">Corner points x,y in metres — one per line (front edge = first two points). Auto-filled by Drawing import.
+          <label class="hint">Corner points x,y in metres — one per line. Auto-filled by Drawing import.
             <textarea name="polygon" rows="4" placeholder="0,0&#10;12.2,0&#10;11.5,17.6&#10;0.3,18.0"></textarea>
           </label>
         </details>
@@ -211,6 +237,6 @@
       </div>
     </section>
   </main>
-  <script src="app.js?v=15"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>

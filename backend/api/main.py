@@ -32,7 +32,7 @@ from fastapi import Response, Form
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
 
-APP_VERSION = "1.4-ui"
+APP_VERSION = "1.5-plotinput"
 app = FastAPI(title="DCR Feasibility & Compliance System", version=APP_VERSION)
 
 # --- team-only access gate (session cookie + login page; real logout) ---
@@ -121,6 +121,9 @@ class PlotIn(BaseModel):
     village: str | None = None
     polygon: list | None = None
     front_edge_idx: int = 0
+    plot_type: str = "individual"
+    district: str | None = None
+    road_sides: dict | None = None
 
 
 class ProposalIn(BaseModel):
