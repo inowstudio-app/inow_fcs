@@ -9,7 +9,28 @@ from __future__ import annotations
 import base64, os
 
 KB_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "rules", "assistant_kb.md")
-MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+MODEL_ENV = os.environ.get("ANTHROPIC_MODEL")  # optional explicit override
+_RESOLVED_MODEL = None
+
+
+def _resolve_model(client) -> str:
+    """Use ANTHROPIC_MODEL if set; else auto-pick from the models the key can access
+    (prefer Sonnet, then Opus, then Haiku, then newest). Cached after first lookup."""
+    global _RESOLVED_MODEL
+    if MODEL_ENV:
+        return MODEL_ENV
+    if _RESOLVED_MODEL:
+        return _RESOLVED_MODEL
+    try:
+        ids = [m.id for m in client.models.list(limit=100).data]  # newest first
+        pick = (next((i for i in ids if "sonnet" in i.lower()), None)
+                or next((i for i in ids if "opus" in i.lower()), None)
+                or next((i for i in ids if "haiku" in i.lower()), None)
+                or (ids[0] if ids else None))
+        _RESOLVED_MODEL = pick or "claude-3-5-haiku-latest"
+    except Exception:
+        _RESOLVED_MODEL = "claude-3-5-haiku-latest"
+    return _RESOLVED_MODEL
 
 SYSTEM = """You are a Tamil Nadu DCR expert assistant for architects, grounded in the \
 Tamil Nadu Combined Development & Building Rules, 2019 (with amendments). Answer design-stage \
@@ -39,7 +60,8 @@ def _kb() -> str:
 
 
 def status() -> dict:
-    return {"configured": bool(os.environ.get("ANTHROPIC_API_KEY")), "model": MODEL}
+    return {"configured": bool(os.environ.get("ANTHROPIC_API_KEY")),
+            "model": MODEL_ENV or _RESOLVED_MODEL or "auto-detect"}
 
 
 def ask(question: str, image_bytes: bytes | None = None, image_media_type: str | None = None) -> dict:
@@ -59,10 +81,12 @@ def ask(question: str, image_bytes: bytes | None = None, image_media_type: str |
             "data": base64.b64encode(image_bytes).decode("ascii")}})
     content.append({"type": "text", "text": question or "Please review the attached sketch against the TN DCR."})
 
+    model = None
     try:
         client = anthropic.Anthropic()
+        model = _resolve_model(client)
         msg = client.messages.create(
-            model=MODEL, max_tokens=1200,
+            model=model, max_tokens=1200,
             system=SYSTEM + _kb(),
             messages=[{"role": "user", "content": content}],
         )
@@ -70,9 +94,9 @@ def ask(question: str, image_bytes: bytes | None = None, image_media_type: str |
         if not text.strip():
             text = "(The model returned no text — try rephrasing your question.)"
         usage = getattr(msg, "usage", None)
-        return {"configured": True, "answer": text, "model": MODEL,
+        return {"configured": True, "answer": text, "model": model,
                 "usage": {"input": getattr(usage, "input_tokens", None),
                           "output": getattr(usage, "output_tokens", None)} if usage else None}
     except Exception as e:  # surface the real cause to the UI
-        return {"configured": True, "model": MODEL,
+        return {"configured": True, "model": model,
                 "answer": f"⚠ Assistant error: {type(e).__name__}: {e}"}
