@@ -23,6 +23,7 @@
       <button class="tab active" data-view="feasibility">Feasibility study</button>
       <button class="tab" data-view="compliance">Compliance check</button>
       <button class="tab" data-view="dxf">Drawing import</button>
+      <button class="tab" data-view="assistant">DCR Assistant</button>
       <button class="tab" data-view="projects">Projects</button>
     </nav>
   </header>
@@ -179,6 +180,20 @@
             <p class="disclaimer">Auto-derived from the imported drawing per TNCDBR-2019. Indicative pre-scrutiny — verify before submission.</p>
           </div>
         </div>
+      </div>
+
+      <!-- DCR ASSISTANT VIEW -->
+      <div id="view-assistant" class="view" hidden>
+        <h2 class="rh-title">DCR Assistant <span class="hint">— ask design doubts, grounded in TNCDBR-2019</span></h2>
+        <div id="asstNotice" class="ex-miss" hidden></div>
+        <div id="asstThread" class="thread"></div>
+        <div class="ask-row">
+          <label class="file-btn" title="Attach a hand sketch / reference">🖼 Sketch<input type="file" id="asstImg" accept="image/*" hidden /></label>
+          <textarea id="asstQ" rows="2" placeholder="e.g. Can an open staircase extend into the side setback for a 2-storey house? Can a 1st-floor toilet project into the setback?"></textarea>
+          <button id="asstSend" class="run" style="width:auto;white-space:nowrap">Ask →</button>
+        </div>
+        <div id="asstImgName" class="hint"></div>
+        <p class="disclaimer">Indicative guidance per TNCDBR-2019. Confirm with the sanctioning authority.</p>
       </div>
 
       <!-- PROJECTS VIEW -->

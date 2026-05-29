@@ -26,7 +26,8 @@ from engine.fmb import render_and_probe
 from engine.dxf_import import parse_dxf
 from engine.scrutiny import run_scrutiny
 from engine.report_pdf import build_pdf
-from fastapi import Response
+from engine import assistant
+from fastapi import Response, Form
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
@@ -191,6 +192,21 @@ async def dxf_parse(file: UploadFile = File(...)):
         return parse_dxf(data)
     except Exception as e:  # noqa
         raise HTTPException(422, f"Could not read DXF: {e}")
+
+
+@app.get("/api/assistant/status")
+def assistant_status():
+    return assistant.status()
+
+
+@app.post("/api/assistant")
+async def assistant_ask(question: str = Form(""), image: UploadFile | None = File(None)):
+    img_bytes = await image.read() if image is not None else None
+    media = image.content_type if image is not None else None
+    try:
+        return assistant.ask(question, img_bytes, media)
+    except Exception as e:  # noqa
+        raise HTTPException(502, f"Assistant error: {e}")
 
 
 @app.post("/api/scrutiny")

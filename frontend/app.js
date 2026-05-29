@@ -66,17 +66,82 @@ document.querySelectorAll(".tab[data-view]").forEach(t => t.addEventListener("cl
   document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
   t.classList.add("active");
   VIEW = t.dataset.view;
+  const fullWidth = (VIEW === "projects" || VIEW === "dxf" || VIEW === "assistant");
   $("#proposalInputs").hidden = VIEW !== "compliance";
-  $("#primaryBtn").style.display = (VIEW === "projects" || VIEW === "dxf") ? "none" : "";
+  $("#primaryBtn").style.display = fullWidth ? "none" : "";
   $("#primaryBtn").textContent = VIEW === "compliance" ? "Check compliance →" : "Analyse this plot →";
-  $("#inputPanel").style.display = (VIEW === "projects" || VIEW === "dxf") ? "none" : "";
+  $("#inputPanel").style.display = fullWidth ? "none" : "";
   showView();
   if (VIEW === "projects") loadProjects();
+  if (VIEW === "assistant") checkAssistant();
 }));
 function showView() {
-  ["feasibility", "compliance", "dxf", "projects"].forEach(v => $("#view-" + v).hidden = v !== VIEW);
-  $("#placeholder").hidden = (VIEW === "feasibility" && LAST) || (VIEW === "compliance" && LASTC) || VIEW === "projects" || VIEW === "dxf";
+  ["feasibility", "compliance", "dxf", "assistant", "projects"].forEach(v => $("#view-" + v).hidden = v !== VIEW);
+  $("#placeholder").hidden = (VIEW === "feasibility" && LAST) || (VIEW === "compliance" && LASTC) || fullWidthView();
 }
+function fullWidthView() { return ["projects", "dxf", "assistant"].includes(VIEW); }
+
+// ===== DCR Assistant =====
+let ASST_IMG = null;
+async function checkAssistant() {
+  try {
+    const s = await (await fetch("/api/assistant/status")).json();
+    const n = $("#asstNotice");
+    if (s.configured) { n.hidden = true; }
+    else { n.hidden = false; n.textContent = "⚠ Assistant not switched on — add ANTHROPIC_API_KEY in the server environment to enable answers."; }
+  } catch (e) {}
+}
+$("#asstImg").addEventListener("change", (e) => {
+  ASST_IMG = e.target.files[0] || null;
+  $("#asstImgName").textContent = ASST_IMG ? "Attached: " + ASST_IMG.name : "";
+});
+$("#asstSend").addEventListener("click", async () => {
+  const q = $("#asstQ").value.trim();
+  if (!q && !ASST_IMG) return;
+  addBubble("you", q + (ASST_IMG ? "  [+ sketch]" : ""));
+  $("#asstQ").value = "";
+  const thinking = addBubble("dcr", "…thinking…");
+  const fd = new FormData();
+  fd.append("question", q);
+  if (ASST_IMG) fd.append("image", ASST_IMG);
+  try {
+    const r = await fetch("/api/assistant", { method: "POST", body: fd });
+    const d = await r.json();
+    thinking.remove();
+    renderAnswer(d.answer || "(no answer)");
+  } catch (err) { thinking.remove(); addBubble("dcr", "Error: " + err.message); }
+  ASST_IMG = null; $("#asstImg").value = ""; $("#asstImgName").textContent = "";
+});
+function addBubble(who, text) {
+  const div = document.createElement("div");
+  div.className = "bubble " + who;
+  div.textContent = text;
+  $("#asstThread").appendChild(div);
+  div.scrollIntoView({ block: "end" });
+  return div;
+}
+function renderAnswer(text) {
+  const div = document.createElement("div");
+  div.className = "bubble dcr";
+  // pull verdict
+  let html = "";
+  const vm = text.match(/VERDICT:\s*(Allowed|Not allowed|Conditional)/i);
+  if (vm) {
+    const v = vm[1].toLowerCase();
+    const cls = v === "allowed" ? "ok" : v === "not allowed" ? "fail" : "cond";
+    html += `<div class="verdict ${cls}" style="font-size:15px;padding:6px 12px;margin:0 0 8px">${vm[1].toUpperCase()}</div>`;
+    text = text.replace(vm[0], "");
+  }
+  // extract an svg block to render inline
+  let svg = "";
+  text = text.replace(/```svg\s*([\s\S]*?)```/i, (_, s) => { svg = s.replace(/<script[\s\S]*?<\/script>/gi, ""); return ""; });
+  html += "<div>" + escapeHtml(text.trim()).replace(/\n/g, "<br>") + "</div>";
+  if (svg) html += `<div class="diagram">${svg}</div>`;
+  div.innerHTML = html;
+  $("#asstThread").appendChild(div);
+  div.scrollIntoView({ block: "end" });
+}
+function escapeHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 // ===== gather plot inputs (convert to metres) =====
 function plotBody() {
