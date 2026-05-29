@@ -32,7 +32,7 @@ from fastapi import Response, Form
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
 
-APP_VERSION = "2.1-northanchor"
+APP_VERSION = "2.2-neufert"
 app = FastAPI(title="DCR Feasibility & Compliance System", version=APP_VERSION)
 
 # --- team-only access gate (session cookie + login page; real logout) ---
@@ -167,8 +167,11 @@ class SaveIn(BaseModel):
 @app.get("/api/health")
 def health():
     from engine.amendments import status as amend_status
+    from engine import books as _books
     return {"status": "ok", "version": APP_VERSION, "auth": bool(APP_PASSWORD),
-            "modules": ["feasibility", "scenarios", "compliance", "projects"],
+            "modules": ["feasibility", "scenarios", "compliance", "projects",
+                        "neufert_books", "sun_path"],
+            "books_available": _books.available(),
             "rules_loaded": ["Rule 35 (NHR)", "Rule 39 (HR)", "Rule 41 (OSR)", "Rule 49 (Premium FSI)", "Annexure IV (parking)"],
             "amendments_reviewed_through": amend_status()["reviewed_through"]}
 
@@ -268,6 +271,10 @@ async def fmb_parse(file: UploadFile = File(...)):
     except Exception as e:  # noqa
         raise HTTPException(422, f"Could not read FMB PDF: {e}")
 
+
+# ---- Neufert Data assistant (reference books) ----
+from api.books_routes import router as books_router
+app.include_router(books_router)
 
 # serve the browser UI (mounted last so /api/* takes precedence)
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

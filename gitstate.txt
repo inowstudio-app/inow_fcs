@@ -1,0 +1,15 @@
+A  backend/api/books_routes.py
+M  backend/api/main.py
+M  backend/engine/assistant.py
+A  backend/engine/books.py
+A  backend/engine/llm.py
+A  backend/engine/sunpath.py
+A  backend/engine/svgutil.py
+A  backend/ingest/build_books.py
+A  data/books/books_index.json
+A  data/books/cache/neufert_30_130.jpg
+M  frontend/app.js
+M  frontend/index.html
+A  frontend/neufert.js
+AD rem.txt
+?? st_1726.txt

@@ -4,7 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DCR Feasibility System — Tamil Nadu</title>
-  <link rel="stylesheet" href="style.css?v=22" />
+  <link rel="stylesheet" href="style.css?v=24" />
+  <style>
+    /* Neufert Data tab */
+    .nf-topicbar{display:flex;gap:6px;margin-bottom:6px}
+    .nf-topicbar #nfBook{flex:0 0 auto}
+    .nf-topicbar #nfSearch{flex:1 1 auto;padding:7px 9px;border:1px solid #e2e8f0;border-radius:8px;font:inherit}
+    .nf-topiclist{width:100%;box-sizing:border-box;border:1px solid #e2e8f0;border-radius:8px;
+      font:13px/1.45 inherit;padding:4px;margin-bottom:8px;background:#fff}
+    .nf-topiclist optgroup{font-weight:700;color:#0f4c84}
+    .nf-topiclist option{padding:3px 5px}
+    #nfCanvas img.bookpage{max-width:100%;border:1px solid #d7deea;border-radius:6px;margin:6px 0;cursor:zoom-in}
+    /* diagrams (sun-path / sanitized SVGs) always scale to fit the canvas */
+    #nfCanvas svg, #asstCanvas svg{max-width:100%;height:auto;display:block;margin:8px auto;
+      border:1px solid #eef2f7;border-radius:8px;background:#fff}
+    #nfCanvas .src-row{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+    #nfCanvas .src-chip{font-size:11.5px;background:#eef3fb;border:1px solid #d7deea;border-radius:20px;
+      padding:3px 9px;cursor:pointer;color:#0f4c84}
+    #nfCanvas .src-chip:hover{background:#dce8f8}
+  </style>
 </head>
 <body>
   <header class="no-print">
@@ -24,6 +42,7 @@
       <button class="tab" data-view="compliance">Compliance check</button>
       <button class="tab" data-view="dxf">Drawing import</button>
       <button class="tab" data-view="assistant">DCR Assistant</button>
+      <button class="tab" data-view="neufert">📖 Neufert Data</button>
       <button class="tab" data-view="projects">Projects</button>
     </nav>
   </header>
@@ -247,6 +266,37 @@
         <p class="disclaimer">Indicative guidance per TNCDBR-2019. Confirm with the sanctioning authority.</p>
       </div>
 
+      <!-- NEUFERT DATA VIEW -->
+      <div id="view-neufert" class="view" hidden>
+        <h2 class="rh-title">Neufert Data <span class="hint">— grounded in Neufert &amp; Architect's Data</span></h2>
+        <div id="nfNotice" class="ex-miss" hidden></div>
+        <div class="asst-grid">
+          <div class="asst-left">
+            <div class="nf-topicbar">
+              <select id="nfBook"><option value="">All books</option></select>
+              <input id="nfSearch" type="search" placeholder="Filter topics…" />
+            </div>
+            <select id="nfTopic" size="9" class="nf-topiclist"><option value="">Loading topics…</option></select>
+            <div class="chat-bar">
+              <button id="nfNewChat" class="mini" type="button">＋ New chat</button>
+              <span id="nfTopicSel" class="hint"></span>
+            </div>
+            <div id="nfThread" class="thread"></div>
+            <div class="ask-row">
+              <label class="file-btn" title="Attach a sketch / drawing">🖼 Sketch<input type="file" id="nfImg" accept="image/*" hidden /></label>
+              <textarea id="nfQ" rows="2" placeholder="Pick a topic, then ask — e.g. “From my plot sketch with North marked, draw the sun-path diagram.”"></textarea>
+              <button id="nfSend" class="run" style="width:auto;white-space:nowrap">Ask →</button>
+            </div>
+            <div id="nfImgName" class="hint"></div>
+          </div>
+          <div class="asst-right">
+            <div class="canvas-head">Cited book pages / diagram</div>
+            <div id="nfCanvas" class="asst-canvas"><p class="placeholder">Cited book pages, diagrams the assistant draws, and sketches you attach appear here — large.</p></div>
+          </div>
+        </div>
+        <p class="disclaimer">Answers are grounded in the supplied reference-book pages and cite page numbers. If the books don't cover it, the assistant says so rather than guessing.</p>
+      </div>
+
       <!-- PROJECTS VIEW -->
       <div id="view-projects" class="view" hidden>
         <h2 class="rh-title">Saved projects</h2>
@@ -254,6 +304,7 @@
       </div>
     </section>
   </main>
-  <script src="app.js?v=22"></script>
+  <script src="app.js?v=24"></script>
+  <script src="neufert.js?v=24"></script>
 </body>
 </html>

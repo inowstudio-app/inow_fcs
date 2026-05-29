@@ -1,0 +1,4272 @@
+{
+  "books": {
+    "neufert": {
+      "id": "neufert",
+      "title": "Neufert — Architects' Data",
+      "label": "Neufert",
+      "file": "neufert.pdf",
+      "pages": 640,
+      "topic_source": "toc",
+      "chapter_count": 5,
+      "topic_count": 329
+    },
+    "architects_data": {
+      "id": "architects_data",
+      "title": "Architect's Data",
+      "label": "Architect's Data",
+      "file": "architects_data.pdf",
+      "pages": 447,
+      "topic_source": "derived",
+      "chapter_count": 370,
+      "topic_count": 370
+    }
+  },
+  "chapters": [
+    {
+      "book": "neufert",
+      "title": "Acknowledgements",
+      "page": 4,
+      "page_end": 591,
+      "children": [
+        {
+          "title": "Introduction",
+          "page": 5,
+          "page_end": 5
+        },
+        {
+          "title": "Units and symbols",
+          "page": 6,
+          "page_end": 7
+        },
+        {
+          "title": "Documentation and drawings",
+          "page": 8,
+          "page_end": 10
+        },
+        {
+          "title": "Construction drawings",
+          "page": 11,
+          "page_end": 13
+        },
+        {
+          "title": "Construction drawings: CAD",
+          "page": 14,
+          "page_end": 15
+        },
+        {
+          "title": "Construction drawings:symbols",
+          "page": 16,
+          "page_end": 18
+        },
+        {
+          "title": "Man: the universal standard",
+          "page": 19,
+          "page_end": 19
+        },
+        {
+          "title": "Man: dimensions and space requirements",
+          "page": 20,
+          "page_end": 21
+        },
+        {
+          "title": "Man: small spaces",
+          "page": 22,
+          "page_end": 22
+        },
+        {
+          "title": "Man and his housing",
+          "page": 23,
+          "page_end": 23
+        },
+        {
+          "title": "Room climate",
+          "page": 24,
+          "page_end": 24
+        },
+        {
+          "title": "Building biology",
+          "page": 25,
+          "page_end": 27
+        },
+        {
+          "title": "The eye: perception",
+          "page": 28,
+          "page_end": 29
+        },
+        {
+          "title": "Man and colour",
+          "page": 30,
+          "page_end": 30
+        },
+        {
+          "title": "Dimensional relationships",
+          "page": 31,
+          "page_end": 34
+        },
+        {
+          "title": "Basic measurements",
+          "page": 35,
+          "page_end": 37
+        },
+        {
+          "title": "Modular system",
+          "page": 38,
+          "page_end": 38
+        },
+        {
+          "title": "Coordinate system and dimensioning",
+          "page": 39,
+          "page_end": 39
+        },
+        {
+          "title": "Building details: functional use of materials",
+          "page": 40,
+          "page_end": 40
+        },
+        {
+          "title": "Form: the result of construction",
+          "page": 41,
+          "page_end": 41
+        },
+        {
+          "title": "Form: modern construction tehniques and forms",
+          "page": 42,
+          "page_end": 42
+        },
+        {
+          "title": "The design of houses: expression of the period",
+          "page": 43,
+          "page_end": 43
+        },
+        {
+          "title": "Design method: working process",
+          "page": 44,
+          "page_end": 44
+        },
+        {
+          "title": "Bulding design: preparatory work",
+          "page": 45,
+          "page_end": 46
+        },
+        {
+          "title": "Construction mangement",
+          "page": 47,
+          "page_end": 54
+        },
+        {
+          "title": "The building site: foundations, excavation, trenches",
+          "page": 55,
+          "page_end": 55
+        },
+        {
+          "title": "Excavations: site and building measurements",
+          "page": 56,
+          "page_end": 56
+        },
+        {
+          "title": "Earthworks and foundations structures",
+          "page": 57,
+          "page_end": 58
+        },
+        {
+          "title": "Buiding and site drainage",
+          "page": 59,
+          "page_end": 62
+        },
+        {
+          "title": "Damp-proofing and tanking",
+          "page": 63,
+          "page_end": 65
+        },
+        {
+          "title": "Masonry: natural stone",
+          "page": 66,
+          "page_end": 66
+        },
+        {
+          "title": "Masonry: bricks nd blocks",
+          "page": 67,
+          "page_end": 69
+        },
+        {
+          "title": "External walls: low-energy buiding construction",
+          "page": 70,
+          "page_end": 70
+        },
+        {
+          "title": "Masonry bonds",
+          "page": 71,
+          "page_end": 71
+        },
+        {
+          "title": "Fireplaces",
+          "page": 72,
+          "page_end": 72
+        },
+        {
+          "title": "Chimneys and flues",
+          "page": 73,
+          "page_end": 73
+        },
+        {
+          "title": "Ventilation ducting",
+          "page": 74,
+          "page_end": 74
+        },
+        {
+          "title": "Services: connections",
+          "page": 75,
+          "page_end": 75
+        },
+        {
+          "title": "Roof structures",
+          "page": 76,
+          "page_end": 78
+        },
+        {
+          "title": "Roof forms and coverings",
+          "page": 79,
+          "page_end": 80
+        },
+        {
+          "title": "Dormers",
+          "page": 81,
+          "page_end": 81
+        },
+        {
+          "title": "Loft space",
+          "page": 82,
+          "page_end": 82
+        },
+        {
+          "title": "Roof slopes and flat roofs",
+          "page": 83,
+          "page_end": 83
+        },
+        {
+          "title": "Flat roofs: warm roof construction",
+          "page": 84,
+          "page_end": 84
+        },
+        {
+          "title": "Flat roofs: cold roof construction",
+          "page": 85,
+          "page_end": 85
+        },
+        {
+          "title": "Roof gardens",
+          "page": 86,
+          "page_end": 87
+        },
+        {
+          "title": "Roof gardens: roof construction",
+          "page": 88,
+          "page_end": 88
+        },
+        {
+          "title": "Roof cultivation",
+          "page": 89,
+          "page_end": 89
+        },
+        {
+          "title": "Tensile and inflatable structures",
+          "page": 90,
+          "page_end": 90
+        },
+        {
+          "title": "Cable net structures",
+          "page": 91,
+          "page_end": 91
+        },
+        {
+          "title": "Suspended and tensioned structures",
+          "page": 92,
+          "page_end": 92
+        },
+        {
+          "title": "Space frames: principles",
+          "page": 93,
+          "page_end": 93
+        },
+        {
+          "title": "Space frames: applications",
+          "page": 94,
+          "page_end": 95
+        },
+        {
+          "title": "Multistorey structures",
+          "page": 96,
+          "page_end": 96
+        },
+        {
+          "title": "Suspended floors",
+          "page": 97,
+          "page_end": 97
+        },
+        {
+          "title": "Flooring",
+          "page": 98,
+          "page_end": 98
+        },
+        {
+          "title": "Heating",
+          "page": 99,
+          "page_end": 103
+        },
+        {
+          "title": "Heating: oil storage tanks",
+          "page": 104,
+          "page_end": 104
+        },
+        {
+          "title": "Solar arhitecture",
+          "page": 105,
+          "page_end": 107
+        },
+        {
+          "title": "Solar energy",
+          "page": 108,
+          "page_end": 108
+        },
+        {
+          "title": "Ventilation and air conditioning",
+          "page": 109,
+          "page_end": 112
+        },
+        {
+          "title": "Cold storage rooms",
+          "page": 113,
+          "page_end": 114
+        },
+        {
+          "title": "Thermal insulation: terminology and mechanisms",
+          "page": 115,
+          "page_end": 115
+        },
+        {
+          "title": "Thermal insulation: water vapour diffusion",
+          "page": 116,
+          "page_end": 116
+        },
+        {
+          "title": "Thermal insulation: types of construction",
+          "page": 117,
+          "page_end": 117
+        },
+        {
+          "title": "Thermal insulation: exterior walls and roofs",
+          "page": 118,
+          "page_end": 120
+        },
+        {
+          "title": "Sound insulation",
+          "page": 121,
+          "page_end": 124
+        },
+        {
+          "title": "Vibration damping",
+          "page": 125,
+          "page_end": 125
+        },
+        {
+          "title": "Room acoustics",
+          "page": 126,
+          "page_end": 128
+        },
+        {
+          "title": "Fire detection",
+          "page": 129,
+          "page_end": 129
+        },
+        {
+          "title": "Fire spread",
+          "page": 130,
+          "page_end": 130
+        },
+        {
+          "title": "Smoke and heat extraction systems",
+          "page": 131,
+          "page_end": 131
+        },
+        {
+          "title": "Extinguisher systems",
+          "page": 132,
+          "page_end": 133
+        },
+        {
+          "title": "Fire protection: closures and glazing",
+          "page": 134,
+          "page_end": 134
+        },
+        {
+          "title": "Fire protection:  glazing",
+          "page": 135,
+          "page_end": 135
+        },
+        {
+          "title": "Fire protection: water cooling",
+          "page": 136,
+          "page_end": 136
+        },
+        {
+          "title": "Means of escape from fire",
+          "page": 137,
+          "page_end": 140
+        },
+        {
+          "title": "Access for firefighters",
+          "page": 141,
+          "page_end": 141
+        },
+        {
+          "title": "Protection from lightning",
+          "page": 142,
+          "page_end": 143
+        },
+        {
+          "title": "Aerials",
+          "page": 144,
+          "page_end": 144
+        },
+        {
+          "title": "Lighting: lamps and fittings",
+          "page": 145,
+          "page_end": 146
+        },
+        {
+          "title": "Lighting: provision",
+          "page": 147,
+          "page_end": 147
+        },
+        {
+          "title": "Lighting: arrangements",
+          "page": 148,
+          "page_end": 150
+        },
+        {
+          "title": "Lighting: requirements",
+          "page": 151,
+          "page_end": 154
+        },
+        {
+          "title": "Daylight",
+          "page": 155,
+          "page_end": 167
+        },
+        {
+          "title": "Daylight: insolation",
+          "page": 168,
+          "page_end": 169
+        },
+        {
+          "title": "Glass",
+          "page": 170,
+          "page_end": 177
+        },
+        {
+          "title": "Plastics",
+          "page": 178,
+          "page_end": 178
+        },
+        {
+          "title": "Skylights and dome rooflights",
+          "page": 179,
+          "page_end": 179
+        },
+        {
+          "title": "Windows: sizes",
+          "page": 180,
+          "page_end": 180
+        },
+        {
+          "title": "Windows: arrangement",
+          "page": 181,
+          "page_end": 181
+        },
+        {
+          "title": "Windows: shading",
+          "page": 182,
+          "page_end": 182
+        },
+        {
+          "title": "Windows: types and dimensions",
+          "page": 183,
+          "page_end": 183
+        },
+        {
+          "title": "Loft windows",
+          "page": 184,
+          "page_end": 184
+        },
+        {
+          "title": "Windows: construction",
+          "page": 185,
+          "page_end": 186
+        },
+        {
+          "title": "Windows: cleaning",
+          "page": 187,
+          "page_end": 187
+        },
+        {
+          "title": "Doors: internal",
+          "page": 188,
+          "page_end": 188
+        },
+        {
+          "title": "Doors: sizes and frames",
+          "page": 189,
+          "page_end": 189
+        },
+        {
+          "title": "Revolving and sliding doors",
+          "page": 190,
+          "page_end": 190
+        },
+        {
+          "title": "Garage/warehouse doors",
+          "page": 191,
+          "page_end": 191
+        },
+        {
+          "title": "Looking systems",
+          "page": 192,
+          "page_end": 192
+        },
+        {
+          "title": "Security of buildings and grounds",
+          "page": 193,
+          "page_end": 194
+        },
+        {
+          "title": "Stairs",
+          "page": 195,
+          "page_end": 197
+        },
+        {
+          "title": "Ramps and spiral staircases",
+          "page": 198,
+          "page_end": 198
+        },
+        {
+          "title": "Escalators",
+          "page": 199,
+          "page_end": 199
+        },
+        {
+          "title": "Travelators",
+          "page": 200,
+          "page_end": 200
+        },
+        {
+          "title": "Lifts",
+          "page": 201,
+          "page_end": 202
+        },
+        {
+          "title": "Small goods lifts",
+          "page": 203,
+          "page_end": 203
+        },
+        {
+          "title": "Hydraulic lifts",
+          "page": 204,
+          "page_end": 205
+        },
+        {
+          "title": "Renovation of old buildings",
+          "page": 206,
+          "page_end": 210
+        },
+        {
+          "title": "Maintenance and restauration",
+          "page": 211,
+          "page_end": 213
+        },
+        {
+          "title": "Change of use",
+          "page": 214,
+          "page_end": 215
+        },
+        {
+          "title": "Road dimensions",
+          "page": 216,
+          "page_end": 216
+        },
+        {
+          "title": "Road design",
+          "page": 217,
+          "page_end": 218
+        },
+        {
+          "title": "Intersections",
+          "page": 219,
+          "page_end": 219
+        },
+        {
+          "title": "Roadside paths",
+          "page": 220,
+          "page_end": 220
+        },
+        {
+          "title": "Paths and paving",
+          "page": 221,
+          "page_end": 221
+        },
+        {
+          "title": "Bicycle parking",
+          "page": 222,
+          "page_end": 222
+        },
+        {
+          "title": "Bicycle parking and cycle paths",
+          "page": 223,
+          "page_end": 223
+        },
+        {
+          "title": "Motorways",
+          "page": 224,
+          "page_end": 224
+        },
+        {
+          "title": "Tramways/urban light railways",
+          "page": 225,
+          "page_end": 225
+        },
+        {
+          "title": "Traffic layout",
+          "page": 226,
+          "page_end": 228
+        },
+        {
+          "title": "Traffic noise",
+          "page": 229,
+          "page_end": 229
+        },
+        {
+          "title": "Securing embankments",
+          "page": 230,
+          "page_end": 230
+        },
+        {
+          "title": "Garden enclosures",
+          "page": 231,
+          "page_end": 232
+        },
+        {
+          "title": "Pergolas, paths, steps, retaining walls",
+          "page": 233,
+          "page_end": 233
+        },
+        {
+          "title": "Earthworks",
+          "page": 234,
+          "page_end": 234
+        },
+        {
+          "title": "Gardens: planting methods",
+          "page": 235,
+          "page_end": 236
+        },
+        {
+          "title": "Tendril and climbing plants",
+          "page": 237,
+          "page_end": 237
+        },
+        {
+          "title": "Banked and raised beds",
+          "page": 238,
+          "page_end": 238
+        },
+        {
+          "title": "Greenhouses",
+          "page": 239,
+          "page_end": 239
+        },
+        {
+          "title": "Gardens: trees and hedges",
+          "page": 240,
+          "page_end": 240
+        },
+        {
+          "title": "Garden ponds",
+          "page": 241,
+          "page_end": 241
+        },
+        {
+          "title": "Gardens: use of rainwater",
+          "page": 242,
+          "page_end": 242
+        },
+        {
+          "title": "Gardens equipment",
+          "page": 243,
+          "page_end": 243
+        },
+        {
+          "title": "Garden swimming pools",
+          "page": 244,
+          "page_end": 245
+        },
+        {
+          "title": "Private swimming pools",
+          "page": 246,
+          "page_end": 248
+        },
+        {
+          "title": "Porches, entrance halls and corridors",
+          "page": 249,
+          "page_end": 249
+        },
+        {
+          "title": "Landings and hallways",
+          "page": 250,
+          "page_end": 250
+        },
+        {
+          "title": "Storage space",
+          "page": 251,
+          "page_end": 251
+        },
+        {
+          "title": "Utility rooms",
+          "page": 252,
+          "page_end": 253
+        },
+        {
+          "title": "Pantries, larders and storage",
+          "page": 254,
+          "page_end": 254
+        },
+        {
+          "title": "Kitchens",
+          "page": 255,
+          "page_end": 258
+        },
+        {
+          "title": "Dining rooms",
+          "page": 259,
+          "page_end": 260
+        },
+        {
+          "title": "Bedrooms",
+          "page": 261,
+          "page_end": 265
+        },
+        {
+          "title": "Bathrooms",
+          "page": 266,
+          "page_end": 271
+        },
+        {
+          "title": "Carpots",
+          "page": 272,
+          "page_end": 272
+        },
+        {
+          "title": "Holiday homes",
+          "page": 273,
+          "page_end": 273
+        },
+        {
+          "title": "Sheds/summer houses",
+          "page": 274,
+          "page_end": 274
+        },
+        {
+          "title": "Timber houses",
+          "page": 275,
+          "page_end": 275
+        },
+        {
+          "title": "House orientation",
+          "page": 276,
+          "page_end": 276
+        },
+        {
+          "title": "Housing types",
+          "page": 277,
+          "page_end": 280
+        },
+        {
+          "title": "Terraced houses",
+          "page": 281,
+          "page_end": 281
+        },
+        {
+          "title": "Semi-detached houses",
+          "page": 282,
+          "page_end": 282
+        },
+        {
+          "title": "Courtyard houses",
+          "page": 283,
+          "page_end": 283
+        },
+        {
+          "title": "Detached houses",
+          "page": 284,
+          "page_end": 284
+        },
+        {
+          "title": "Houses with conservatories",
+          "page": 285,
+          "page_end": 285
+        },
+        {
+          "title": "Three-level houses",
+          "page": 286,
+          "page_end": 286
+        },
+        {
+          "title": "Square, cubic and tent-shape forms",
+          "page": 287,
+          "page_end": 287
+        },
+        {
+          "title": "Ecological buiding",
+          "page": 288,
+          "page_end": 288
+        },
+        {
+          "title": "House types: examples",
+          "page": 289,
+          "page_end": 291
+        },
+        {
+          "title": "Houses on slopes",
+          "page": 292,
+          "page_end": 292
+        },
+        {
+          "title": "Large house",
+          "page": 293,
+          "page_end": 293
+        },
+        {
+          "title": "International examples",
+          "page": 294,
+          "page_end": 295
+        },
+        {
+          "title": "Mutistorey housing",
+          "page": 296,
+          "page_end": 298
+        },
+        {
+          "title": "Balconies",
+          "page": 299,
+          "page_end": 299
+        },
+        {
+          "title": "Access corridors/decks",
+          "page": 300,
+          "page_end": 300
+        },
+        {
+          "title": "Stepped housing",
+          "page": 301,
+          "page_end": 302
+        },
+        {
+          "title": "Building for disabled people",
+          "page": 303,
+          "page_end": 304
+        },
+        {
+          "title": "Barrier-free living",
+          "page": 305,
+          "page_end": 305
+        },
+        {
+          "title": "Old people's accommodation",
+          "page": 306,
+          "page_end": 308
+        },
+        {
+          "title": "Laundries",
+          "page": 309,
+          "page_end": 310
+        },
+        {
+          "title": "Schools",
+          "page": 311,
+          "page_end": 317
+        },
+        {
+          "title": "Further education colleges",
+          "page": 318,
+          "page_end": 318
+        },
+        {
+          "title": "Colleges and universities",
+          "page": 319,
+          "page_end": 323
+        },
+        {
+          "title": "Drawing studios",
+          "page": 324,
+          "page_end": 324
+        },
+        {
+          "title": "Laboratories",
+          "page": 325,
+          "page_end": 328
+        },
+        {
+          "title": "Child daycare centres",
+          "page": 329,
+          "page_end": 329
+        },
+        {
+          "title": "Playgrounds",
+          "page": 330,
+          "page_end": 330
+        },
+        {
+          "title": "Libraries",
+          "page": 331,
+          "page_end": 336
+        },
+        {
+          "title": "Museums and art galleries",
+          "page": 337,
+          "page_end": 337
+        },
+        {
+          "title": "Museums: examples",
+          "page": 338,
+          "page_end": 339
+        },
+        {
+          "title": "Principles",
+          "page": 340,
+          "page_end": 343
+        },
+        {
+          "title": "Principles of typology",
+          "page": 344,
+          "page_end": 346
+        },
+        {
+          "title": "Calculations: construction",
+          "page": 347,
+          "page_end": 347
+        },
+        {
+          "title": "Calculations: building technology",
+          "page": 348,
+          "page_end": 348
+        },
+        {
+          "title": "Calculations: division of space",
+          "page": 349,
+          "page_end": 349
+        },
+        {
+          "title": "Calculations: floor area requirements",
+          "page": 350,
+          "page_end": 351
+        },
+        {
+          "title": "Calculations: space for furniture",
+          "page": 352,
+          "page_end": 353
+        },
+        {
+          "title": "Calculations: archive space",
+          "page": 354,
+          "page_end": 354
+        },
+        {
+          "title": "Calculations: workstation with computers",
+          "page": 355,
+          "page_end": 355
+        },
+        {
+          "title": "Office buidings: examples",
+          "page": 356,
+          "page_end": 362
+        },
+        {
+          "title": "Banks and building societies",
+          "page": 363,
+          "page_end": 366
+        },
+        {
+          "title": "Glazed arcades: typology",
+          "page": 367,
+          "page_end": 367
+        },
+        {
+          "title": "Glazed arcades: historical examples",
+          "page": 368,
+          "page_end": 369
+        },
+        {
+          "title": "Glazed arcade: applied examples",
+          "page": 370,
+          "page_end": 370
+        },
+        {
+          "title": "Transparent roofs and canopies",
+          "page": 371,
+          "page_end": 371
+        },
+        {
+          "title": "Shops",
+          "page": 372,
+          "page_end": 373
+        },
+        {
+          "title": "Food courts",
+          "page": 374,
+          "page_end": 374
+        },
+        {
+          "title": "Departament stores and supermarkets",
+          "page": 375,
+          "page_end": 377
+        },
+        {
+          "title": "Supermarkets/hypermarkets",
+          "page": 378,
+          "page_end": 378
+        },
+        {
+          "title": "Workshops: woodworking",
+          "page": 379,
+          "page_end": 382
+        },
+        {
+          "title": "Workshops: metalworking",
+          "page": 383,
+          "page_end": 384
+        },
+        {
+          "title": "Workshops: showrooms and vehicle repairs",
+          "page": 385,
+          "page_end": 385
+        },
+        {
+          "title": "Vehicle repair shops",
+          "page": 386,
+          "page_end": 387
+        },
+        {
+          "title": "Vehicle company workshops",
+          "page": 388,
+          "page_end": 388
+        },
+        {
+          "title": "Workshops: bakery, etc.",
+          "page": 389,
+          "page_end": 390
+        },
+        {
+          "title": "Wholesale butchers",
+          "page": 391,
+          "page_end": 391
+        },
+        {
+          "title": "Meat processing centre",
+          "page": 392,
+          "page_end": 392
+        },
+        {
+          "title": "Industrial buildings: planning",
+          "page": 393,
+          "page_end": 394
+        },
+        {
+          "title": "Warehouse design",
+          "page": 395,
+          "page_end": 395
+        },
+        {
+          "title": "High-bay  warehouses",
+          "page": 396,
+          "page_end": 396
+        },
+        {
+          "title": "Warehousing technology: planning/logistics",
+          "page": 397,
+          "page_end": 397
+        },
+        {
+          "title": "Warehousing tehnology: safety regulations",
+          "page": 398,
+          "page_end": 398
+        },
+        {
+          "title": "Warehousing tehnology: rack systems",
+          "page": 399,
+          "page_end": 399
+        },
+        {
+          "title": "Handling",
+          "page": 400,
+          "page_end": 400
+        },
+        {
+          "title": "Industrial buildings: sheds",
+          "page": 401,
+          "page_end": 401
+        },
+        {
+          "title": "Multistorey Industrial buildings",
+          "page": 402,
+          "page_end": 402
+        },
+        {
+          "title": "Toilet facilities",
+          "page": 403,
+          "page_end": 403
+        },
+        {
+          "title": "Washing facilities",
+          "page": 404,
+          "page_end": 404
+        },
+        {
+          "title": "Sanitary installations",
+          "page": 405,
+          "page_end": 405
+        },
+        {
+          "title": "Changing rooms, lockers",
+          "page": 406,
+          "page_end": 406
+        },
+        {
+          "title": "Power stations",
+          "page": 407,
+          "page_end": 407
+        },
+        {
+          "title": "Hydro-electric power stations",
+          "page": 408,
+          "page_end": 408
+        },
+        {
+          "title": "Small animal stalls",
+          "page": 409,
+          "page_end": 411
+        },
+        {
+          "title": "Poultry farms",
+          "page": 412,
+          "page_end": 412
+        },
+        {
+          "title": "Pig sheds: fattening",
+          "page": 413,
+          "page_end": 414
+        },
+        {
+          "title": "Pig sheds: breeding",
+          "page": 415,
+          "page_end": 415
+        },
+        {
+          "title": "Stables/horses",
+          "page": 416,
+          "page_end": 417
+        },
+        {
+          "title": "Cattle",
+          "page": 418,
+          "page_end": 418
+        },
+        {
+          "title": "Cattle: store bulls",
+          "page": 419,
+          "page_end": 419
+        },
+        {
+          "title": "Buildings for farm vehicles",
+          "page": 420,
+          "page_end": 420
+        },
+        {
+          "title": "Farm facilities",
+          "page": 421,
+          "page_end": 424
+        },
+        {
+          "title": "Ventilation systems",
+          "page": 425,
+          "page_end": 425
+        },
+        {
+          "title": "Railways: track installations",
+          "page": 426,
+          "page_end": 427
+        },
+        {
+          "title": "Railways: European structure gauges clearances",
+          "page": 428,
+          "page_end": 428
+        },
+        {
+          "title": "Railways: UK structure gauges clearances",
+          "page": 429,
+          "page_end": 430
+        },
+        {
+          "title": "Railways freight yards",
+          "page": 431,
+          "page_end": 431
+        },
+        {
+          "title": "Railway stations",
+          "page": 432,
+          "page_end": 433
+        },
+        {
+          "title": "Bus stations",
+          "page": 434,
+          "page_end": 435
+        },
+        {
+          "title": "Vehicle dimensions",
+          "page": 436,
+          "page_end": 437
+        },
+        {
+          "title": "Loading bays",
+          "page": 438,
+          "page_end": 439
+        },
+        {
+          "title": "Turning and parking",
+          "page": 440,
+          "page_end": 442
+        },
+        {
+          "title": "Garages and car-parking",
+          "page": 443,
+          "page_end": 443
+        },
+        {
+          "title": "Car-parks",
+          "page": 444,
+          "page_end": 446
+        },
+        {
+          "title": "Filling stations",
+          "page": 447,
+          "page_end": 448
+        },
+        {
+          "title": "Service stations",
+          "page": 449,
+          "page_end": 449
+        },
+        {
+          "title": "Airports: planning",
+          "page": 450,
+          "page_end": 451
+        },
+        {
+          "title": "Airports: terminals",
+          "page": 452,
+          "page_end": 453
+        },
+        {
+          "title": "Airports: runways and aprons",
+          "page": 454,
+          "page_end": 454
+        },
+        {
+          "title": "Airports: examples",
+          "page": 455,
+          "page_end": 455
+        },
+        {
+          "title": "Fire stations",
+          "page": 456,
+          "page_end": 458
+        },
+        {
+          "title": "Restaurants: space requirements",
+          "page": 459,
+          "page_end": 459
+        },
+        {
+          "title": "Restaurants: arrangements",
+          "page": 460,
+          "page_end": 460
+        },
+        {
+          "title": "Restaurant cars",
+          "page": 461,
+          "page_end": 461
+        },
+        {
+          "title": "Restaurant types",
+          "page": 462,
+          "page_end": 462
+        },
+        {
+          "title": "Restaurant kitchens",
+          "page": 463,
+          "page_end": 465
+        },
+        {
+          "title": "Large kitchens",
+          "page": 466,
+          "page_end": 467
+        },
+        {
+          "title": "Hotel layout and area requirements",
+          "page": 468,
+          "page_end": 470
+        },
+        {
+          "title": "Hotel kitchens",
+          "page": 471,
+          "page_end": 471
+        },
+        {
+          "title": "Hotel: examples",
+          "page": 472,
+          "page_end": 472
+        },
+        {
+          "title": "Motels",
+          "page": 473,
+          "page_end": 473
+        },
+        {
+          "title": "Youth hostels",
+          "page": 474,
+          "page_end": 476
+        },
+        {
+          "title": "Zoos and aquariums",
+          "page": 477,
+          "page_end": 479
+        },
+        {
+          "title": "Theatres: historical summary",
+          "page": 480,
+          "page_end": 481
+        },
+        {
+          "title": "Theatres: auditoriums",
+          "page": 482,
+          "page_end": 484
+        },
+        {
+          "title": "Stage and secondary areas",
+          "page": 485,
+          "page_end": 489
+        },
+        {
+          "title": "Cinemas",
+          "page": 490,
+          "page_end": 491
+        },
+        {
+          "title": "Drive-in cinemas",
+          "page": 492,
+          "page_end": 492
+        },
+        {
+          "title": "Sports: stadiums",
+          "page": 493,
+          "page_end": 494
+        },
+        {
+          "title": "Sports halls",
+          "page": 495,
+          "page_end": 500
+        },
+        {
+          "title": "Outdoor pitches",
+          "page": 501,
+          "page_end": 502
+        },
+        {
+          "title": "Indoor pitches",
+          "page": 503,
+          "page_end": 503
+        },
+        {
+          "title": "Athletics facilities",
+          "page": 504,
+          "page_end": 507
+        },
+        {
+          "title": "Conditioning and fitness rooms",
+          "page": 508,
+          "page_end": 509
+        },
+        {
+          "title": "Tennis facilities",
+          "page": 510,
+          "page_end": 511
+        },
+        {
+          "title": "Miniature golf",
+          "page": 512,
+          "page_end": 513
+        },
+        {
+          "title": "Golf courses",
+          "page": 514,
+          "page_end": 515
+        },
+        {
+          "title": "Sailing: yachts and marinas",
+          "page": 516,
+          "page_end": 517
+        },
+        {
+          "title": "Sailing : harbours/marinas",
+          "page": 518,
+          "page_end": 519
+        },
+        {
+          "title": "Water sports",
+          "page": 520,
+          "page_end": 520
+        },
+        {
+          "title": "Riding facilities",
+          "page": 521,
+          "page_end": 522
+        },
+        {
+          "title": "Ski jumps",
+          "page": 523,
+          "page_end": 523
+        },
+        {
+          "title": "Ice rinks",
+          "page": 524,
+          "page_end": 526
+        },
+        {
+          "title": "Cyclecross/BMX",
+          "page": 527,
+          "page_end": 527
+        },
+        {
+          "title": "Shooting ranges",
+          "page": 528,
+          "page_end": 529
+        },
+        {
+          "title": "Indoor sports",
+          "page": 530,
+          "page_end": 531
+        },
+        {
+          "title": "Skittle and bowling alleys",
+          "page": 532,
+          "page_end": 532
+        },
+        {
+          "title": "Indoor swimming pools",
+          "page": 533,
+          "page_end": 537
+        },
+        {
+          "title": "Open air swimming pools",
+          "page": 538,
+          "page_end": 538
+        },
+        {
+          "title": "Indoor/open air swimming pools",
+          "page": 539,
+          "page_end": 540
+        },
+        {
+          "title": "Sauna",
+          "page": 541,
+          "page_end": 543
+        },
+        {
+          "title": "Amusement arcades",
+          "page": 544,
+          "page_end": 544
+        },
+        {
+          "title": "Group practices and healthcare centres",
+          "page": 545,
+          "page_end": 546
+        },
+        {
+          "title": "Hospitals: general",
+          "page": 547,
+          "page_end": 547
+        },
+        {
+          "title": "Hospitals: construction planning",
+          "page": 548,
+          "page_end": 548
+        },
+        {
+          "title": "Hospitals: planning conception",
+          "page": 549,
+          "page_end": 549
+        },
+        {
+          "title": "Hospitals: forms of building",
+          "page": 550,
+          "page_end": 551
+        },
+        {
+          "title": "Hospitals: dimensional co-ordination",
+          "page": 552,
+          "page_end": 553
+        },
+        {
+          "title": "Hospitals: corridors, doors, stairs, lifts",
+          "page": 554,
+          "page_end": 555
+        },
+        {
+          "title": "Hospitals: main surgical rooms",
+          "page": 556,
+          "page_end": 556
+        },
+        {
+          "title": "Hospitals: post-operative facilities",
+          "page": 557,
+          "page_end": 557
+        },
+        {
+          "title": "Surgery safety requirements",
+          "page": 558,
+          "page_end": 558
+        },
+        {
+          "title": "Hospitals: demarcation",
+          "page": 559,
+          "page_end": 559
+        },
+        {
+          "title": "Hospitals: intensive care area",
+          "page": 560,
+          "page_end": 560
+        },
+        {
+          "title": "Hospitals: care areas",
+          "page": 561,
+          "page_end": 564
+        },
+        {
+          "title": "Hospitals: treatment areas",
+          "page": 565,
+          "page_end": 567
+        },
+        {
+          "title": "Hospitals: laboratories; functional diagnosis",
+          "page": 568,
+          "page_end": 568
+        },
+        {
+          "title": "Hospitals: supplimentary disciplines",
+          "page": 569,
+          "page_end": 569
+        },
+        {
+          "title": "Day clinics: outpatient surgery",
+          "page": 570,
+          "page_end": 571
+        },
+        {
+          "title": "Hospitals: supplies areas",
+          "page": 572,
+          "page_end": 574
+        },
+        {
+          "title": "Hospitals: general areas",
+          "page": 575,
+          "page_end": 575
+        },
+        {
+          "title": "Hospitals: teaching and research",
+          "page": 576,
+          "page_end": 576
+        },
+        {
+          "title": "A & E and outpatiens departament",
+          "page": 577,
+          "page_end": 577
+        },
+        {
+          "title": "Hospitals: maternity and neonatal care",
+          "page": 578,
+          "page_end": 578
+        },
+        {
+          "title": "Hospitals: mortuary, pathology, service yard",
+          "page": 579,
+          "page_end": 579
+        },
+        {
+          "title": "Special hospitals",
+          "page": 580,
+          "page_end": 581
+        },
+        {
+          "title": "Special care area safety",
+          "page": 582,
+          "page_end": 584
+        },
+        {
+          "title": "Church organs",
+          "page": 585,
+          "page_end": 586
+        },
+        {
+          "title": "Churches: bells, towers",
+          "page": 587,
+          "page_end": 587
+        },
+        {
+          "title": "Synagogues",
+          "page": 588,
+          "page_end": 588
+        },
+        {
+          "title": "Mosques",
+          "page": 589,
+          "page_end": 589
+        },
+        {
+          "title": "Cemeteries and graveyards",
+          "page": 590,
+          "page_end": 590
+        },
+        {
+          "title": "Cemeteries and graveyards",
+          "page": 591,
+          "page_end": 591
+        }
+      ]
+    },
+    {
+      "book": "neufert",
+      "title": "Bibliography",
+      "page": 592,
+      "page_end": 597,
+      "children": []
+    },
+    {
+      "book": "neufert",
+      "title": "Related Standards",
+      "page": 598,
+      "page_end": 613,
+      "children": []
+    },
+    {
+      "book": "neufert",
+      "title": "Conversion Factors/Tables",
+      "page": 614,
+      "page_end": 630,
+      "children": []
+    },
+    {
+      "book": "neufert",
+      "title": "Index",
+      "page": 631,
+      "page_end": 640,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ARCHITECTS'",
+      "page": 1,
+      "page_end": 1,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "John",
+      "page": 2,
+      "page_end": 2,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Contents",
+      "page": 3,
+      "page_end": 6,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Contributors",
+      "page": 7,
+      "page_end": 7,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Acknowledgements",
+      "page": 8,
+      "page_end": 8,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Fore word",
+      "page": 9,
+      "page_end": 9,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Foreword",
+      "page": 10,
+      "page_end": 10,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Abbreviations",
+      "page": 11,
+      "page_end": 12,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "scale in",
+      "page": 13,
+      "page_end": 13,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Use",
+      "page": 14,
+      "page_end": 14,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Drawing",
+      "page": 15,
+      "page_end": 16,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "//I",
+      "page": 17,
+      "page_end": 17,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "thJ-_",
+      "page": 18,
+      "page_end": 18,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Drawing practice",
+      "page": 19,
+      "page_end": 19,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "practice",
+      "page": 20,
+      "page_end": 20,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Proportions",
+      "page": 21,
+      "page_end": 22,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "sewin'",
+      "page": 23,
+      "page_end": 23,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Man",
+      "page": 24,
+      "page_end": 24,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "I(I",
+      "page": 25,
+      "page_end": 25,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Man",
+      "page": 26,
+      "page_end": 26,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "[co",
+      "page": 27,
+      "page_end": 27,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Man & his buildings",
+      "page": 28,
+      "page_end": 28,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "•••ii",
+      "page": 29,
+      "page_end": 29,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "iii__",
+      "page": 30,
+      "page_end": 30,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Man & his buildings",
+      "page": 31,
+      "page_end": 31,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Man",
+      "page": 32,
+      "page_end": 32,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Man and his buildings",
+      "page": 33,
+      "page_end": 33,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Man & his buildings",
+      "page": 34,
+      "page_end": 34,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "b(c",
+      "page": 35,
+      "page_end": 35,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "r?*M",
+      "page": 36,
+      "page_end": 36,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "*FH-J1",
+      "page": 37,
+      "page_end": 37,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Lighting",
+      "page": 38,
+      "page_end": 38,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Daylight",
+      "page": 39,
+      "page_end": 39,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "FT1",
+      "page": 40,
+      "page_end": 40,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Daylight",
+      "page": 41,
+      "page_end": 44,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "__X1",
+      "page": 45,
+      "page_end": 45,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Sunlight",
+      "page": 46,
+      "page_end": 49,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ground",
+      "page": 50,
+      "page_end": 50,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "IsEanthr",
+      "page": 51,
+      "page_end": 51,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "7NE",
+      "page": 52,
+      "page_end": 52,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Houses",
+      "page": 53,
+      "page_end": 58,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ri4",
+      "page": 59,
+      "page_end": 59,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Houses",
+      "page": 60,
+      "page_end": 60,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "1:r",
+      "page": 61,
+      "page_end": 61,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Houses",
+      "page": 62,
+      "page_end": 62,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "d*j",
+      "page": 63,
+      "page_end": 63,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "III",
+      "page": 64,
+      "page_end": 64,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Houses",
+      "page": 65,
+      "page_end": 66,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "rexck-up",
+      "page": 67,
+      "page_end": 67,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "N,'",
+      "page": 68,
+      "page_end": 68,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "rrr",
+      "page": 69,
+      "page_end": 69,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "T'j",
+      "page": 70,
+      "page_end": 70,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "TJc\\,",
+      "page": 71,
+      "page_end": 71,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Houses",
+      "page": 72,
+      "page_end": 72,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "J1O",
+      "page": 73,
+      "page_end": 73,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ill",
+      "page": 74,
+      "page_end": 74,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "12V",
+      "page": 75,
+      "page_end": 75,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "j°i",
+      "page": 76,
+      "page_end": 76,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "fl\\",
+      "page": 77,
+      "page_end": 77,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "tii",
+      "page": 78,
+      "page_end": 78,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "TJ1",
+      "page": 79,
+      "page_end": 79,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Houses",
+      "page": 80,
+      "page_end": 83,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L_Ji",
+      "page": 84,
+      "page_end": 84,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Houses",
+      "page": 85,
+      "page_end": 85,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "x1,x70",
+      "page": 86,
+      "page_end": 86,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "II1",
+      "page": 87,
+      "page_end": 87,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "tcr",
+      "page": 88,
+      "page_end": 88,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "dia",
+      "page": 89,
+      "page_end": 89,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Th",
+      "page": 90,
+      "page_end": 90,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ato",
+      "page": 91,
+      "page_end": 91,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "iiii",
+      "page": 92,
+      "page_end": 92,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "2OO",
+      "page": 93,
+      "page_end": 93,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "old",
+      "page": 94,
+      "page_end": 94,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "'\\T",
+      "page": 95,
+      "page_end": 95,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "old",
+      "page": 96,
+      "page_end": 96,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "disabled",
+      "page": 97,
+      "page_end": 97,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "y1dr",
+      "page": 98,
+      "page_end": 98,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "1fr",
+      "page": 99,
+      "page_end": 99,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "lii",
+      "page": 100,
+      "page_end": 100,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Flats &",
+      "page": 101,
+      "page_end": 103,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "'H",
+      "page": 104,
+      "page_end": 104,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "EPt",
+      "page": 105,
+      "page_end": 105,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Tir",
+      "page": 106,
+      "page_end": 106,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Flats",
+      "page": 107,
+      "page_end": 107,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "k!kkkk",
+      "page": 108,
+      "page_end": 108,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "rwa5",
+      "page": 109,
+      "page_end": 109,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Stepped",
+      "page": 110,
+      "page_end": 110,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Shared",
+      "page": 111,
+      "page_end": 111,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "rt__",
+      "page": 112,
+      "page_end": 112,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Houses",
+      "page": 113,
+      "page_end": 113,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "1U-f",
+      "page": 114,
+      "page_end": 114,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Gardens",
+      "page": 115,
+      "page_end": 115,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "NIw",
+      "page": 116,
+      "page_end": 116,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Jf",
+      "page": 117,
+      "page_end": 117,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Tt",
+      "page": 118,
+      "page_end": 118,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Ii'°j",
+      "page": 119,
+      "page_end": 119,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ffrff[;",
+      "page": 120,
+      "page_end": 120,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "•te",
+      "page": 121,
+      "page_end": 121,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "light",
+      "page": 122,
+      "page_end": 122,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Gardens",
+      "page": 123,
+      "page_end": 123,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "?t:z",
+      "page": 124,
+      "page_end": 124,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "d13m",
+      "page": 125,
+      "page_end": 125,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "flfler",
+      "page": 126,
+      "page_end": 126,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "rçr",
+      "page": 127,
+      "page_end": 127,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "indoor",
+      "page": 128,
+      "page_end": 128,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Saunas",
+      "page": 129,
+      "page_end": 129,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "[F5I",
+      "page": 130,
+      "page_end": 130,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "HjII1",
+      "page": 131,
+      "page_end": 131,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Schools",
+      "page": 132,
+      "page_end": 132,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "JIJt",
+      "page": 133,
+      "page_end": 133,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Lj27",
+      "page": 134,
+      "page_end": 134,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Ill",
+      "page": 135,
+      "page_end": 135,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "5t)i11",
+      "page": 136,
+      "page_end": 136,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "fi1/",
+      "page": 137,
+      "page_end": 137,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "l39",
+      "page": 138,
+      "page_end": 138,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Boarding",
+      "page": 139,
+      "page_end": 139,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "UULI",
+      "page": 140,
+      "page_end": 140,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "cJU",
+      "page": 141,
+      "page_end": 141,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "$erf",
+      "page": 142,
+      "page_end": 142,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Schools",
+      "page": 143,
+      "page_end": 143,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "mze_",
+      "page": 144,
+      "page_end": 144,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Schools",
+      "page": 145,
+      "page_end": 145,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": ";c",
+      "page": 146,
+      "page_end": 146,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Colleges",
+      "page": 147,
+      "page_end": 149,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "n122n",
+      "page": 150,
+      "page_end": 150,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "920V",
+      "page": 151,
+      "page_end": 151,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "liR'",
+      "page": 152,
+      "page_end": 152,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Colleges",
+      "page": 153,
+      "page_end": 153,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "?It'",
+      "page": 154,
+      "page_end": 154,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ro'",
+      "page": 155,
+      "page_end": 155,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "hostels",
+      "page": 156,
+      "page_end": 156,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Libraries",
+      "page": 157,
+      "page_end": 157,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "TuII",
+      "page": 158,
+      "page_end": 158,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Libraries",
+      "page": 159,
+      "page_end": 159,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "jfl",
+      "page": 160,
+      "page_end": 160,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 161,
+      "page_end": 161,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "LJJJ",
+      "page": 162,
+      "page_end": 162,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ff1",
+      "page": 163,
+      "page_end": 163,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hos pita/s",
+      "page": 164,
+      "page_end": 164,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ii;)",
+      "page": 165,
+      "page_end": 165,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 166,
+      "page_end": 167,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L:I",
+      "page": 168,
+      "page_end": 168,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 169,
+      "page_end": 169,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "hb",
+      "page": 170,
+      "page_end": 170,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 171,
+      "page_end": 171,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "w__",
+      "page": 172,
+      "page_end": 172,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 173,
+      "page_end": 173,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hos pita/s",
+      "page": 174,
+      "page_end": 174,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Tc!_",
+      "page": 175,
+      "page_end": 175,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 176,
+      "page_end": 176,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "onEEur,",
+      "page": 177,
+      "page_end": 177,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "qi;",
+      "page": 178,
+      "page_end": 178,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "i\"L",
+      "page": 179,
+      "page_end": 179,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Lis",
+      "page": 180,
+      "page_end": 180,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 181,
+      "page_end": 181,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "1JJE[",
+      "page": 182,
+      "page_end": 182,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 183,
+      "page_end": 183,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "r&nl",
+      "page": 184,
+      "page_end": 184,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals: special",
+      "page": 185,
+      "page_end": 185,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "mirci",
+      "page": 186,
+      "page_end": 186,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals: special",
+      "page": 187,
+      "page_end": 187,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hos pita/s",
+      "page": 188,
+      "page_end": 188,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "T345666",
+      "page": 189,
+      "page_end": 189,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "IIL",
+      "page": 190,
+      "page_end": 190,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "(c'1",
+      "page": 191,
+      "page_end": 191,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hos pita/s",
+      "page": 192,
+      "page_end": 192,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hospitals",
+      "page": 193,
+      "page_end": 193,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Lrr",
+      "page": 194,
+      "page_end": 194,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "i50fJt",
+      "page": 195,
+      "page_end": 195,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Churches",
+      "page": 196,
+      "page_end": 196,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "awt",
+      "page": 197,
+      "page_end": 197,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "7Ii",
+      "page": 198,
+      "page_end": 198,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "huH",
+      "page": 199,
+      "page_end": 199,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "i200N",
+      "page": 200,
+      "page_end": 200,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "'iHT!",
+      "page": 201,
+      "page_end": 201,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "tI",
+      "page": 202,
+      "page_end": 202,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "T1T{][",
+      "page": 203,
+      "page_end": 203,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ii!",
+      "page": 204,
+      "page_end": 204,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ftn",
+      "page": 205,
+      "page_end": 205,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "u1T",
+      "page": 206,
+      "page_end": 206,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "bfl2V",
+      "page": 207,
+      "page_end": 207,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "lEle",
+      "page": 208,
+      "page_end": 208,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "1IIiIIIIIlIl",
+      "page": 209,
+      "page_end": 209,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Shops",
+      "page": 210,
+      "page_end": 210,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "precincts",
+      "page": 211,
+      "page_end": 211,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Shopping",
+      "page": 212,
+      "page_end": 212,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Shopping precincts",
+      "page": 213,
+      "page_end": 213,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "DODD",
+      "page": 214,
+      "page_end": 214,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Restaurants",
+      "page": 215,
+      "page_end": 215,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "n0,0Ip",
+      "page": 216,
+      "page_end": 216,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "shi",
+      "page": 217,
+      "page_end": 217,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "IIi.i111",
+      "page": 218,
+      "page_end": 218,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "e[]",
+      "page": 219,
+      "page_end": 219,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hotels",
+      "page": 220,
+      "page_end": 222,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "r---1",
+      "page": 223,
+      "page_end": 223,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hotels",
+      "page": 224,
+      "page_end": 224,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L=1L1",
+      "page": 225,
+      "page_end": 225,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hotels",
+      "page": 226,
+      "page_end": 227,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "biT",
+      "page": 228,
+      "page_end": 228,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hotels",
+      "page": 229,
+      "page_end": 230,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Motels",
+      "page": 231,
+      "page_end": 232,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": ";i1ç",
+      "page": 233,
+      "page_end": 233,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Convention hotels",
+      "page": 234,
+      "page_end": 234,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "U'.•",
+      "page": 235,
+      "page_end": 235,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Public",
+      "page": 236,
+      "page_end": 236,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "iHi",
+      "page": 237,
+      "page_end": 237,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L±L",
+      "page": 238,
+      "page_end": 238,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "I-Ii",
+      "page": 239,
+      "page_end": 239,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "nals",
+      "page": 240,
+      "page_end": 240,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "buildings",
+      "page": 241,
+      "page_end": 241,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Office buildings",
+      "page": 242,
+      "page_end": 245,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "I1HHH",
+      "page": 246,
+      "page_end": 246,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Office buildings",
+      "page": 247,
+      "page_end": 249,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L!Jt",
+      "page": 250,
+      "page_end": 250,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Office buildings",
+      "page": 251,
+      "page_end": 251,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "buildings",
+      "page": 252,
+      "page_end": 252,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "iI,j(I",
+      "page": 253,
+      "page_end": 253,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": ";ii",
+      "page": 254,
+      "page_end": 254,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Office buildings",
+      "page": 255,
+      "page_end": 256,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "i,/",
+      "page": 257,
+      "page_end": 257,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "a-b",
+      "page": 258,
+      "page_end": 258,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "unid",
+      "page": 259,
+      "page_end": 259,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "\\\\\\\\N",
+      "page": 260,
+      "page_end": 260,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Vehicle services",
+      "page": 261,
+      "page_end": 261,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Ill!",
+      "page": 262,
+      "page_end": 262,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "car",
+      "page": 263,
+      "page_end": 263,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "multi",
+      "page": 264,
+      "page_end": 264,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "services: petrol",
+      "page": 265,
+      "page_end": 266,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "!1EE",
+      "page": 267,
+      "page_end": 267,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "2Ttñ",
+      "page": 268,
+      "page_end": 268,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "HiH",
+      "page": 269,
+      "page_end": 269,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "IfTfJ[fJTIf",
+      "page": 270,
+      "page_end": 270,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "'--terminai",
+      "page": 271,
+      "page_end": 271,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Airports",
+      "page": 272,
+      "page_end": 273,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ry'TrT",
+      "page": 274,
+      "page_end": 274,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "_J",
+      "page": 275,
+      "page_end": 275,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "I4i",
+      "page": 276,
+      "page_end": 276,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "!H!",
+      "page": 277,
+      "page_end": 277,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Lifi",
+      "page": 278,
+      "page_end": 278,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Industrial buildings",
+      "page": 279,
+      "page_end": 280,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "_in1",
+      "page": 281,
+      "page_end": 281,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "__s",
+      "page": 282,
+      "page_end": 282,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "/'\\l_____",
+      "page": 283,
+      "page_end": 283,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "uflu",
+      "page": 284,
+      "page_end": 284,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Industrial buildings",
+      "page": 285,
+      "page_end": 285,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "i",
+      "page": 286,
+      "page_end": 286,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "buildings",
+      "page": 287,
+      "page_end": 287,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Industrial buildings",
+      "page": 288,
+      "page_end": 288,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "IIIII",
+      "page": 289,
+      "page_end": 289,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Hli",
+      "page": 290,
+      "page_end": 290,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "uiu",
+      "page": 291,
+      "page_end": 291,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "iri",
+      "page": 292,
+      "page_end": 292,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Iii",
+      "page": 293,
+      "page_end": 293,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "_-\"n",
+      "page": 294,
+      "page_end": 294,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Industrial buildings",
+      "page": 295,
+      "page_end": 295,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "r1tZii",
+      "page": 296,
+      "page_end": 296,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Industrial buildings",
+      "page": 297,
+      "page_end": 297,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Indus trial buildings",
+      "page": 298,
+      "page_end": 298,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Industrial buildings",
+      "page": 299,
+      "page_end": 299,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Indus trial buildings",
+      "page": 300,
+      "page_end": 300,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Industrial buildings",
+      "page": 301,
+      "page_end": 301,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "buildings",
+      "page": 302,
+      "page_end": 302,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "r;i",
+      "page": 303,
+      "page_end": 303,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "wUP",
+      "page": 304,
+      "page_end": 304,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Laboratories",
+      "page": 305,
+      "page_end": 305,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Farm buildings",
+      "page": 306,
+      "page_end": 306,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Farm",
+      "page": 307,
+      "page_end": 307,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L1&",
+      "page": 308,
+      "page_end": 308,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "nmn",
+      "page": 309,
+      "page_end": 309,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Farm buildings",
+      "page": 310,
+      "page_end": 310,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "tff",
+      "page": 311,
+      "page_end": 311,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "buildings",
+      "page": 312,
+      "page_end": 312,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Farm buildings",
+      "page": 313,
+      "page_end": 313,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "kiI",
+      "page": 314,
+      "page_end": 314,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Farm buildings",
+      "page": 315,
+      "page_end": 315,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "7(Th",
+      "page": 316,
+      "page_end": 316,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "JiHHI",
+      "page": 317,
+      "page_end": 317,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "[IHili",
+      "page": 318,
+      "page_end": 318,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "slaa",
+      "page": 319,
+      "page_end": 319,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "[th",
+      "page": 320,
+      "page_end": 320,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "buildings",
+      "page": 321,
+      "page_end": 321,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "art)",
+      "page": 322,
+      "page_end": 322,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Lj4I",
+      "page": 323,
+      "page_end": 323,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "4i2.O",
+      "page": 324,
+      "page_end": 324,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "crop",
+      "page": 325,
+      "page_end": 325,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "buildings",
+      "page": 326,
+      "page_end": 326,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Sport",
+      "page": 327,
+      "page_end": 328,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Ox70",
+      "page": 329,
+      "page_end": 329,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "I",
+      "page": 330,
+      "page_end": 330,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "iti",
+      "page": 331,
+      "page_end": 331,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Sport",
+      "page": 332,
+      "page_end": 333,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "r'i",
+      "page": 334,
+      "page_end": 334,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "]1EIilhII",
+      "page": 335,
+      "page_end": 335,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "c",
+      "page": 336,
+      "page_end": 336,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ID()",
+      "page": 337,
+      "page_end": 337,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L1IJ",
+      "page": 338,
+      "page_end": 338,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "fIam",
+      "page": 339,
+      "page_end": 339,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "si_I]",
+      "page": 340,
+      "page_end": 340,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "III",
+      "page": 341,
+      "page_end": 341,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Sport",
+      "page": 342,
+      "page_end": 342,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Sport: swimming",
+      "page": 343,
+      "page_end": 343,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "T'LI4",
+      "page": 344,
+      "page_end": 344,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L9i",
+      "page": 345,
+      "page_end": 345,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "IJo",
+      "page": 346,
+      "page_end": 346,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "2Ii",
+      "page": 347,
+      "page_end": 347,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "i_j",
+      "page": 348,
+      "page_end": 348,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "T.S",
+      "page": 349,
+      "page_end": 349,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "t.h",
+      "page": 350,
+      "page_end": 350,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "(TeTh",
+      "page": 351,
+      "page_end": 351,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Sport",
+      "page": 352,
+      "page_end": 352,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "if\"",
+      "page": 353,
+      "page_end": 353,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Thn",
+      "page": 354,
+      "page_end": 354,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Sport: golf",
+      "page": 355,
+      "page_end": 355,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "equitation",
+      "page": 356,
+      "page_end": 356,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "iJ_",
+      "page": 357,
+      "page_end": 357,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "®eO",
+      "page": 358,
+      "page_end": 358,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "[DDfl",
+      "page": 359,
+      "page_end": 359,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "L/1",
+      "page": 360,
+      "page_end": 360,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Theatres",
+      "page": 361,
+      "page_end": 365,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "t1o",
+      "page": 366,
+      "page_end": 366,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "ii'",
+      "page": 367,
+      "page_end": 367,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "J1fl",
+      "page": 368,
+      "page_end": 368,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Cinemas",
+      "page": 369,
+      "page_end": 369,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Drive-in cinemas",
+      "page": 370,
+      "page_end": 370,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "I27/'",
+      "page": 371,
+      "page_end": 371,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Museums",
+      "page": 372,
+      "page_end": 372,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "rii",
+      "page": 373,
+      "page_end": 373,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Page",
+      "page": 374,
+      "page_end": 374,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Components",
+      "page": 375,
+      "page_end": 375,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Conversions",
+      "page": 376,
+      "page_end": 376,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Con versions",
+      "page": 377,
+      "page_end": 377,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Conversions",
+      "page": 378,
+      "page_end": 378,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Con",
+      "page": 379,
+      "page_end": 379,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Conversions",
+      "page": 380,
+      "page_end": 380,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "versions",
+      "page": 381,
+      "page_end": 381,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Conversions",
+      "page": 382,
+      "page_end": 382,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Con versions",
+      "page": 383,
+      "page_end": 385,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Con",
+      "page": 386,
+      "page_end": 386,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Con versions",
+      "page": 387,
+      "page_end": 387,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Conversions",
+      "page": 388,
+      "page_end": 389,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Con versions",
+      "page": 390,
+      "page_end": 391,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Conversions",
+      "page": 392,
+      "page_end": 392,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Con versions",
+      "page": 393,
+      "page_end": 393,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Materials",
+      "page": 394,
+      "page_end": 394,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "A",
+      "page": 395,
+      "page_end": 395,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Services: distribution",
+      "page": 396,
+      "page_end": 396,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Services: Methods",
+      "page": 397,
+      "page_end": 397,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Se,vices",
+      "page": 398,
+      "page_end": 398,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Services: Heating",
+      "page": 399,
+      "page_end": 401,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "f I",
+      "page": 402,
+      "page_end": 402,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Services: Heating systems",
+      "page": 403,
+      "page_end": 403,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Services",
+      "page": 404,
+      "page_end": 405,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "isx",
+      "page": 406,
+      "page_end": 406,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "io.1(",
+      "page": 407,
+      "page_end": 407,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Services",
+      "page": 408,
+      "page_end": 408,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Services: Sound",
+      "page": 409,
+      "page_end": 409,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Lighting",
+      "page": 410,
+      "page_end": 412,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Doors",
+      "page": 413,
+      "page_end": 414,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "5lI",
+      "page": 415,
+      "page_end": 415,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Windows",
+      "page": 416,
+      "page_end": 416,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "17d1",
+      "page": 417,
+      "page_end": 417,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "shading",
+      "page": 418,
+      "page_end": 418,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "¶mmmTr",
+      "page": 419,
+      "page_end": 419,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Stairs",
+      "page": 420,
+      "page_end": 420,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "2i96",
+      "page": 421,
+      "page_end": 421,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Urn",
+      "page": 422,
+      "page_end": 422,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Elevators",
+      "page": 423,
+      "page_end": 424,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Bibliography",
+      "page": 425,
+      "page_end": 440,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Index",
+      "page": 441,
+      "page_end": 445,
+      "children": []
+    },
+    {
+      "book": "architects_data",
+      "title": "Irinal",
+      "page": 446,
+      "page_end": 446,
+      "children": []
+    }
+  ]
+}

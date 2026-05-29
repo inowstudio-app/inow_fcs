@@ -8,6 +8,8 @@ and ask() returns a friendly "not configured" message, so the app runs fine with
 from __future__ import annotations
 import base64, os
 
+from engine.svgutil import extract_and_sanitize
+
 KB_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "rules", "assistant_kb.md")
 MODEL_ENV = os.environ.get("ANTHROPIC_MODEL")  # optional explicit override
 _RESOLVED_MODEL = None
@@ -43,9 +45,20 @@ and suggest what official clause or authority to check.
 - Then give a short, specific explanation and cite the exact rule/clause (e.g. "Rule 28(a)(iii)").
 - State the numeric conditions/limits that apply (e.g. distances, heights).
 - If an image (sketch) is provided, interpret what it shows and answer about that specific situation.
-- When a simple diagram would clarify the rule, include ONE minimal inline SVG inside a ```svg code fence \
-(viewBox, plain shapes + text, no scripts). Keep it small and illustrative.
 - Be concise and practical. Do not invent rules or numbers.
+
+DIAGRAMS — when a simple diagram clarifies the rule, include ONE inline SVG inside a ```svg code \
+fence. It MUST be clean and legible — follow every rule:
+- Use viewBox="0 0 800 600". Put NOTHING outside the viewBox.
+- Keep generous padding (>=30px from all edges). Never let text touch or overlap a line, shape, \
+or other text. If two labels would collide, move one onto its own clear leader line.
+- Font: >=14px for labels, >=16px for the title; never below 12px. One title at the top.
+- Draw real geometry to scale where dimensions matter (e.g. a setback section): a plot/wall \
+rectangle, the element, and dimension lines with arrowheads and a numeric label per dimension.
+- Restrained palette: dark slate (#334155) strokes, ONE accent colour (#1668b3 or #1f9d5c) for the \
+element in question, light grey (#e2e8f0) for guides. Stroke width 1-2px.
+- Label every element once, placed beside it (not on top). Add a small legend only if needed.
+- No scripts, no animation, no foreignObject. Keep it a clear technical sketch, not decorative.
 
 === DCR KNOWLEDGE BASE ===
 """
@@ -93,8 +106,10 @@ def ask(question: str, image_bytes: bytes | None = None, image_media_type: str |
         text = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
         if not text.strip():
             text = "(The model returned no text — try rephrasing your question.)"
+        # pull out + clean any diagram so it always renders legibly
+        clean_text, svg = extract_and_sanitize(text)
         usage = getattr(msg, "usage", None)
-        return {"configured": True, "answer": text, "model": model,
+        return {"configured": True, "answer": clean_text or text, "svg": svg, "model": model,
                 "usage": {"input": getattr(usage, "input_tokens", None),
                           "output": getattr(usage, "output_tokens", None)} if usage else None}
     except Exception as e:  # surface the real cause to the UI

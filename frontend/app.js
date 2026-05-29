@@ -81,7 +81,7 @@ document.querySelectorAll(".tab[data-view]").forEach(t => t.addEventListener("cl
   document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
   t.classList.add("active");
   VIEW = t.dataset.view;
-  const fullWidth = (VIEW === "projects" || VIEW === "dxf" || VIEW === "assistant");
+  const fullWidth = (VIEW === "projects" || VIEW === "dxf" || VIEW === "assistant" || VIEW === "neufert");
   $("#proposalInputs").hidden = VIEW !== "compliance";
   $("#primaryBtn").style.display = fullWidth ? "none" : "";
   $("#primaryBtn").textContent = VIEW === "compliance" ? "Check compliance →" : "Analyse this plot →";
@@ -92,10 +92,10 @@ document.querySelectorAll(".tab[data-view]").forEach(t => t.addEventListener("cl
   if (VIEW === "assistant") checkAssistant();
 }));
 function showView() {
-  ["feasibility", "compliance", "dxf", "assistant", "projects"].forEach(v => $("#view-" + v).hidden = v !== VIEW);
+  ["feasibility", "compliance", "dxf", "assistant", "neufert", "projects"].forEach(v => $("#view-" + v).hidden = v !== VIEW);
   $("#placeholder").hidden = (VIEW === "feasibility" && LAST) || (VIEW === "compliance" && LASTC) || fullWidthView();
 }
-function fullWidthView() { return ["projects", "dxf", "assistant"].includes(VIEW); }
+function fullWidthView() { return ["projects", "dxf", "assistant", "neufert"].includes(VIEW); }
 
 // ===== DCR Assistant =====
 let ASST_IMG = null, ASST_IMG_DATA = null;
@@ -133,7 +133,7 @@ function loadConvo(id) {
   $("#asstCanvas").innerHTML = `<p class="placeholder">Diagrams and sketches appear here.</p>`;
   c.messages.forEach(m => {
     if (m.role === "you") { addBubble("you", m.text + (m.img ? "  [+ sketch]" : "")); if (m.img) showCanvas(`<img src="${m.img}" alt="sketch">`, "Your sketch"); }
-    else renderAnswer(m.text, m.usage);
+    else renderAnswer(m.text, m.usage, m.svg);
   });
   $("#chatSaved").textContent = "loaded";
 }
@@ -175,8 +175,8 @@ $("#asstSend").addEventListener("click", async () => {
     const d = await r.json().catch(() => ({}));
     const ans = d.answer || d.detail || ("Error " + r.status + " — no response from server.");
     thinking.remove();
-    renderAnswer(ans, d.usage);
-    convoPush({ role: "dcr", text: ans, usage: d.usage });
+    renderAnswer(ans, d.usage, d.svg);
+    convoPush({ role: "dcr", text: ans, usage: d.usage, svg: d.svg });
   } catch (err) { thinking.remove(); addBubble("dcr", "Error: " + err.message); }
   ASST_IMG = null; ASST_IMG_DATA = null; $("#asstImg").value = ""; $("#asstImgName").textContent = "";
 });
@@ -188,7 +188,7 @@ function addBubble(who, text) {
   div.scrollIntoView({ block: "end" });
   return div;
 }
-function renderAnswer(text, usage) {
+function renderAnswer(text, usage, svgArg) {
   const div = document.createElement("div");
   div.className = "bubble dcr";
   // pull verdict
@@ -200,9 +200,11 @@ function renderAnswer(text, usage) {
     html += `<div class="verdict ${cls}" style="font-size:15px;padding:6px 12px;margin:0 0 8px">${vm[1].toUpperCase()}</div>`;
     text = text.replace(vm[0], "");
   }
-  // extract an svg block to render inline
-  let svg = "";
-  text = text.replace(/```svg\s*([\s\S]*?)```/i, (_, s) => { svg = s.replace(/<script[\s\S]*?<\/script>/gi, ""); return ""; });
+  // prefer the server-cleaned svg; fall back to an inline ```svg fence (older saved chats)
+  let svg = svgArg || "";
+  if (!svg) {
+    text = text.replace(/```svg\s*([\s\S]*?)```/i, (_, s) => { svg = s.replace(/<script[\s\S]*?<\/script>/gi, ""); return ""; });
+  }
   html += "<div>" + escapeHtml(text.trim()).replace(/\n/g, "<br>") + "</div>";
   if (svg) html += `<div class="hint" style="margin-top:6px">▶ diagram shown on the right →</div>`;
   if (usage && usage.input) html += `<div class="hint" style="margin-top:6px">~${usage.input} in / ${usage.output} out tokens</div>`;
