@@ -2,8 +2,8 @@ const $ = (s) => document.querySelector(s);
 const form = $("#plotForm");
 let LAST = null, LASTC = null, DXF = null, VIEW = "feasibility";
 
-// ===== Units =====
-let U = "m";
+// ===== Units (default = Feet/inches) =====
+let U = "ft";
 const FT = 3.280839895, SQFT = 10.76391042, INCH = 39.37007874;
 const toM = (v, k) => (U === "ft" ? (k === "area" ? v / SQFT : v / FT) : v);
 const convertVal = (v, k, a, b) => {
@@ -16,9 +16,19 @@ function feetInches(m) {
   if (inch === 12) { ft++; inch = 0; }
   return `${ft}′ ${inch}″`;
 }
-const fmtLen = (m) => (U === "m" ? `${Math.round(m * 100) / 100} m` : feetInches(m));
-const fmtArea = (sqm) => (U === "m" ? `${fmt(Math.round(sqm * 10) / 10)} m²` : `${fmt(Math.round(sqm * SQFT))} sq.ft`);
-const fmtByUnit = (v, unit) => (unit === "m" ? fmtLen(v) : unit === "m²" ? fmtArea(v) : `${v} ${unit || ""}`);
+// dual=true appends the other unit in a smaller bracketed span (for innerHTML panels);
+// pass dual=false for plain text (SVG / textContent).
+function fmtLen(m, dual = true) {
+  const meters = `${Math.round(m * 100) / 100} m`, fi = feetInches(m);
+  const main = U === "m" ? meters : fi, alt = U === "m" ? fi : meters;
+  return dual ? `${main} <span class="alt">(${alt})</span>` : main;
+}
+function fmtArea(sqm, dual = true) {
+  const m2 = `${fmt(Math.round(sqm * 10) / 10)} m²`, sf = `${fmt(Math.round(sqm * SQFT))} sq.ft`;
+  const main = U === "m" ? m2 : sf, alt = U === "m" ? sf : m2;
+  return dual ? `${main} <span class="alt">(${alt})</span>` : main;
+}
+const fmtByUnit = (v, unit, dual = true) => (unit === "m" ? fmtLen(v, dual) : unit === "m²" ? fmtArea(v, dual) : `${v} ${unit || ""}`);
 
 function updateUnitLabels() {
   document.querySelectorAll("[data-ulabel]").forEach(s => {
@@ -41,6 +51,8 @@ function setUnit(u) {
 }
 $("#uM").addEventListener("click", () => setUnit("m"));
 $("#uF").addEventListener("click", () => setUnit("ft"));
+$("#uM").classList.toggle("uon", U === "m");
+$("#uF").classList.toggle("uon", U === "ft");
 
 // ===== health =====
 fetch("/api/health").then(r => r.json()).then(h => {
@@ -236,7 +248,7 @@ function updateFrontNote() {
   if (!ks.length) { $("#frontNote").textContent = ""; return; }
   let front = null, w = 0;
   for (const [s, ww] of Object.entries(roads)) if (ww > w) { w = ww; front = s; }
-  $("#frontNote").textContent = `Front = ${SIDE_NAMES[front]} side (widest road, ${fmtLen(w)}).`
+  $("#frontNote").textContent = `Front = ${SIDE_NAMES[front]} side (widest road, ${fmtLen(w, false)}).`
     + (ks.length > 1 ? " Other road sides take side/rear setback." : "");
 }
 function avgPos(a, b) { const v = [a, b].filter(x => x > 0); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : 0; }
@@ -266,6 +278,8 @@ function plotBody() {
   for (const [s, w] of Object.entries(roads)) if (w > widest) { widest = w; front = s; }
   b.abutting_road_width_m = widest;
   b.front_edge_idx = ({ S: 0, E: 1, N: 2, W: 3 })[front] ?? 0;
+  b.sides = { N, E, S, W: Wd };       // metres, for the oriented diagram
+  b.front_side = front;               // compass letter of the front (widest road)
   const poly = form.polygon.value.trim();
   if (poly) {
     const pts = poly.split(/\n+/).map(l => l.split(",").map(Number)).filter(p => p.length === 2 && !p.some(isNaN));
@@ -487,7 +501,7 @@ function renderFeasibility() {
   showView();
   const i = LAST.inputs;
   const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-  $("#rhMeta").textContent = `Survey ${i.survey_no || "—"}, ${i.village || "—"} · Plot ${fmtArea(i.area_sqm)} · Road ${fmtLen(i.abutting_road_width_m)} · ${today}`;
+  $("#rhMeta").textContent = `Survey ${i.survey_no || "—"}, ${i.village || "—"} · Plot ${fmtArea(i.area_sqm, false)} · Road ${fmtLen(i.abutting_road_width_m, false)} · ${today}`;
   $("#scenarioCards").innerHTML = LAST.scenarios.map((s, idx) => {
     const rec = s.scenario === LAST.recommended;
     if (!s.feasible) return `<div class="scard no"><div class="sc-name">${s.scenario}</div><div class="sc-no">✕ ${s.reason}</div></div>`;
@@ -501,8 +515,11 @@ function renderFeasibility() {
   if (!sn) { sn = document.createElement("div"); sn.id = "siteNotes"; $("#scenarioCards").after(sn); }
   sn.innerHTML = (LAST.site_notes || []).map(n => `<div class="advis">ⓘ ${n}</div>`).join("");
   document.querySelectorAll(".scard[data-idx]").forEach(el => el.addEventListener("click", () => selectScenario(+el.dataset.idx)));
-  const ri = LAST.scenarios.findIndex(s => s.scenario === LAST.recommended);
-  selectScenario(ri >= 0 ? ri : LAST.scenarios.findIndex(s => s.feasible));
+  // default to Single residence (frequent use case); fall back to recommended, then any feasible
+  let di = LAST.scenarios.findIndex(s => s.feasible && /single residence/i.test(s.scenario));
+  if (di < 0) di = LAST.scenarios.findIndex(s => s.scenario === LAST.recommended && s.feasible);
+  if (di < 0) di = LAST.scenarios.findIndex(s => s.feasible);
+  if (di >= 0) selectScenario(di);
   $("#pendingList").innerHTML = (LAST.pending || []).map(p => `<li>${p}</li>`).join("");
   const am = LAST.amendments;
   if (am) $("#amendBlock").innerHTML = `<h4>Amendments layered</h4>
@@ -521,21 +538,28 @@ function selectScenario(idx) {
     kpi(fmtArea(s.footprint_sqm), "Footprint", `${s.coverage_pct}% coverage`),
     kpi(fmtLen(sb.front), "Front SB", ""), kpi(fmtLen(sb.side), "Side SB", sb.side_applies), kpi(fmtLen(sb.rear), "Rear SB", ""),
   ].join("");
-  $("#upsideBlock").innerHTML = `<h4>Upside &amp; obligations</h4>
+  const plotArea = LAST.inputs.area_sqm || 0;
+  const gfArea = s.footprint_sqm || 0;                 // ground-floor buildable (after setbacks)
+  const setbackArea = Math.max(0, plotArea - gfArea);  // open/setback area
+  $("#upsideBlock").innerHTML = `<h4>Ground floor (after setbacks)</h4>
+    <div class="row2"><span>GF buildable footprint</span><b>${fmtArea(gfArea)}</b></div>
+    <div class="row2"><span>Setback / open area</span><b>${fmtArea(setbackArea)}</b></div>
+    <div class="row2"><span>Ground coverage</span><b>${s.coverage_pct}%</b></div>
+    <h4 style="margin-top:12px">Upside &amp; obligations</h4>
     <div class="row2"><span>Premium FSI (Rule 49)</span><b>${pr.premium_pct ? "+" + pr.premium_pct + "% = " + fmtArea(pr.upside_sqm) : "—"}</b></div>
     <div class="row2"><span>OSR reqd (Rule 41)</span><b>${osr.required_sqm ? fmtArea(osr.required_sqm) + " (" + osr.pct + "%)" : "Nil"}</b></div>`;
   $("#parkingBlock").innerHTML = `<h4>Parking (Annexure IV)</h4><div class="pk"><b>${pk.car_spaces}</b> car · <b>${pk.two_wheeler_spaces}</b> TW</div><div class="hint">${pk.basis}. ${pk.note}</div>`;
   $("#flags").innerHTML = (s.flags || []).map(f => `<div class="flag">⚠ ${f}</div>`).join("")
     + (s.advisories || []).map(a => `<div class="advis">ⓘ ${a}</div>`).join("");
   $("#citation").textContent = s.rule;
-  drawOverlay(s.geometry);
+  drawOverlay(s, LAST.inputs);
 }
 
 // ===== render compliance =====
 function renderCompliance() {
   showView();
   const i = LASTC.inputs;
-  $("#cMeta").textContent = `Survey ${i.survey_no || "—"} · Plot ${fmtArea(i.area_sqm)} · Road ${fmtLen(i.abutting_road_width_m)}`;
+  $("#cMeta").textContent = `Survey ${i.survey_no || "—"} · Plot ${fmtArea(i.area_sqm, false)} · Road ${fmtLen(i.abutting_road_width_m, false)}`;
   if (!LASTC.buildable) {
     $("#verdict").innerHTML = `<div class="verdict fail">Not buildable: ${LASTC.reason}</div>`;
     $("#checksTable").innerHTML = ""; return;
@@ -581,25 +605,59 @@ async function delProject(id) { if (confirm("Delete project #" + id + "?")) { aw
 function fmt(n) { return Number(n).toLocaleString("en-IN"); }
 function kpi(v, l, s) { return `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div><div class="s">${s}</div></div>`; }
 
-function drawOverlay(geo) {
+// North-up oriented diagram with plot/setback/buildable dimensions, N arrow, front marker
+function drawOverlay(s, inputs) {
   const svg = $("#overlay");
+  const geo = s.geometry;
   if (!geo || !geo.plot) { svg.innerHTML = ""; return; }
-  const all = geo.plot.concat(geo.buildable && geo.buildable.length ? geo.buildable : []);
-  const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
+  const xs = geo.plot.map(p => p[0]), ys = geo.plot.map(p => p[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  const VB = 420, VBH = 460, pad = 50;
-  const sc = Math.min((VB - 2 * pad) / (maxX - minX || 1), (VBH - 2 * pad) / (maxY - minY || 1));
-  const ox = (VB - (maxX - minX) * sc) / 2, oy = (VBH - (maxY - minY) * sc) / 2;
-  const map = ([x, y]) => `${ox + (x - minX) * sc},${oy + (y - minY) * sc}`;
-  const plotPts = geo.plot.map(map).join(" ");
-  const buildPts = (geo.buildable || []).map(map).join(" ");
-  const fe = geo.plot[geo.front_edge_idx], fe2 = geo.plot[(geo.front_edge_idx + 1) % geo.plot.length];
-  const fmx = ox + ((fe[0] + fe2[0]) / 2 - minX) * sc, fmy = oy + ((fe[1] + fe2[1]) / 2 - minY) * sc;
-  svg.innerHTML = `
-    <polygon points="${plotPts}" fill="rgba(217,77,58,.10)" stroke="#334155" stroke-width="2"/>
-    ${buildPts ? `<polygon points="${buildPts}" fill="rgba(31,157,92,.18)" stroke="#1f9d5c" stroke-width="1.5"/>` : ""}
-    <text x="${fmx}" y="${fmy - 8}" text-anchor="middle" font-size="11" fill="#1668b3" font-weight="600">▲ FRONT / ROAD</text>
-    ${buildPts ? `<text x="${VB / 2}" y="${oy + (maxY - minY) * sc / 2}" text-anchor="middle" font-size="11" fill="#1f9d5c">buildable</text>` : ""}`;
+  const W = maxX - minX, D = maxY - minY;
+  const VB = 460, VBH = 480, pad = 84;
+  const sc = Math.min((VB - 2 * pad) / (W || 1), (VBH - 2 * pad) / (D || 1));
+  const pw = W * sc, ph = D * sc, ox = (VB - pw) / 2, oy = (VBH - ph) / 2;
+  const mp = ([x, y]) => [ox + (x - minX) * sc, oy + (maxY - y) * sc];  // North (max y) at top
+  let bx = ox, by = oy, bw = pw, bh = ph, hasB = false;
+  if (geo.buildable && geo.buildable.length) {
+    const bp = geo.buildable.map(mp), bxs = bp.map(p => p[0]), bys = bp.map(p => p[1]);
+    bx = Math.min(...bxs); by = Math.min(...bys); bw = Math.max(...bxs) - bx; bh = Math.max(...bys) - by; hasB = true;
+  }
+  const sb = s.setbacks_m, front = inputs.front_side, sd = inputs.sides || {};
+  const gap = {
+    top: front === "N" ? sb.front : front === "S" ? sb.rear : sb.side,
+    bottom: front === "S" ? sb.front : front === "N" ? sb.rear : sb.side,
+    right: front === "E" ? sb.front : front === "W" ? sb.rear : sb.side,
+    left: front === "W" ? sb.front : front === "E" ? sb.rear : sb.side,
+  };
+  const T = (x, y, t, anchor = "middle", rot = 0, fill = "#66758a", fw = "400") =>
+    `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="10" fill="${fill}" font-weight="${fw}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}>${t}</text>`;
+  const lenN = sd.N || W, lenS = sd.S || W, lenE = sd.E || D, lenW = sd.W || D;
+  let o = `<rect x="${ox}" y="${oy}" width="${pw}" height="${ph}" fill="rgba(217,77,58,.10)" stroke="#334155" stroke-width="2"/>`;
+  if (hasB && bw > 1 && bh > 1) o += `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="rgba(31,157,92,.18)" stroke="#1f9d5c" stroke-width="1.5"/>`;
+  // plot side lengths
+  o += T(ox + pw / 2, oy - 32, fmtLen(lenN, false));
+  o += T(ox + pw / 2, oy + ph + 36, fmtLen(lenS, false));
+  o += T(ox - 36, oy + ph / 2, fmtLen(lenW, false), "middle", -90);
+  o += T(ox + pw + 36, oy + ph / 2, fmtLen(lenE, false), "middle", 90);
+  if (hasB) {
+    // setback gaps
+    if (by - oy > 8) o += T(ox + pw / 2, oy + (by - oy) / 2 + 3, fmtLen(gap.top, false));
+    if ((oy + ph) - (by + bh) > 8) o += T(ox + pw / 2, (by + bh) + ((oy + ph) - (by + bh)) / 2 + 3, fmtLen(gap.bottom, false));
+    if (bx - ox > 8) o += T(ox + (bx - ox) / 2, oy + ph / 2, fmtLen(gap.left, false));
+    if ((ox + pw) - (bx + bw) > 8) o += T((bx + bw) + ((ox + pw) - (bx + bw)) / 2, oy + ph / 2, fmtLen(gap.right, false));
+    // buildable inner dims
+    o += T(bx + bw / 2, by + bh / 2 - 6, "buildable", "middle", 0, "#1f9d5c", "600");
+    o += T(bx + bw / 2, by + bh / 2 + 9, fmtLen(bw / sc, false), "middle", 0, "#1f9d5c");
+    o += T(bx + bw / 2, by + bh / 2 + 23, "× " + fmtLen(bh / sc, false), "middle", 0, "#1f9d5c");
+  }
+  // FRONT / ROAD marker on the actual front side
+  const fp = front === "N" ? [ox + pw / 2, oy - 50] : front === "S" ? [ox + pw / 2, oy + ph + 52]
+    : front === "E" ? [ox + pw + 52, oy + ph / 2 - 14] : front === "W" ? [ox - 52, oy + ph / 2 - 14] : [ox + pw / 2, oy + ph + 52];
+  o += `<text x="${fp[0]}" y="${fp[1]}" text-anchor="middle" font-size="11" fill="#1668b3" font-weight="700">▲ FRONT / ROAD</text>`;
+  // North arrow (top-right)
+  o += `<g transform="translate(${VB - 22},26)"><line x1="0" y1="12" x2="0" y2="-8" stroke="#334155" stroke-width="1.5"/><path d="M0,-13 L-5,-4 L5,-4 Z" fill="#334155"/><text x="0" y="-16" text-anchor="middle" font-size="11" fill="#334155" font-weight="700">N</text></g>`;
+  svg.setAttribute("viewBox", `0 0 ${VB} ${VBH}`);
+  svg.innerHTML = o;
 }
 
 updateUnitLabels();

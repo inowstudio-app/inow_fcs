@@ -80,6 +80,7 @@ input.need { outline: 2px solid var(--amber); border-color: var(--amber); backgr
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
 .kpi { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; }
 .kpi .v { font-size: 20px; font-weight: 700; color: var(--brand-d); }
+.alt { font-size: .72em; font-weight: 400; color: var(--muted); }
 .kpi .l { font-size: 12px; color: var(--muted); } .kpi .s { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
 .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 14px; align-items: start; }
