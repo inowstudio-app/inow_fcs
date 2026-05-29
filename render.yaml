@@ -1,18 +1,25 @@
 # Render Blueprint — one-click deploy. In Render: New + → Blueprint → connect this repo.
+#
+# This is the FREE-tier config (no card required): no persistent disk, app sleeps when idle.
+# Saved projects (SQLite) reset on each redeploy/restart.
+# For PERSISTENCE later: change plan to "starter" and uncomment the `disk:` block + DB_PATH.
 services:
   - type: web
     name: dcr-app
     runtime: docker
-    plan: starter            # 'starter' ($7/mo) is needed for a persistent disk; 'free' works but the DB resets on redeploy
+    plan: free
     healthCheckPath: /api/health
-    disk:
-      name: dcr-data         # persistent storage so saved projects survive redeploys
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: DB_PATH
-        value: /var/data/projects.db
+        value: /app/data/projects.db   # ephemeral on free tier (resets on redeploy)
       - key: APP_USER
         value: team
-      - key: APP_PASSWORD    # set this in the Render dashboard (Environment tab) — do NOT commit it
+      - key: APP_PASSWORD               # set this in the Render dashboard (Environment tab)
         sync: false
+    # --- For persistence (paid Starter plan, ~$7/mo) use instead: ---
+    # plan: starter
+    # disk:
+    #   name: dcr-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
+    # and set DB_PATH = /var/data/projects.db
