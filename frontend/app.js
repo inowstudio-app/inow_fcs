@@ -106,9 +106,9 @@ $("#asstSend").addEventListener("click", async () => {
   if (ASST_IMG) fd.append("image", ASST_IMG);
   try {
     const r = await fetch("/api/assistant", { method: "POST", body: fd });
-    const d = await r.json();
+    const d = await r.json().catch(() => ({}));
     thinking.remove();
-    renderAnswer(d.answer || "(no answer)");
+    renderAnswer(d.answer || d.detail || ("Error " + r.status + " — no response from server."), d.usage);
   } catch (err) { thinking.remove(); addBubble("dcr", "Error: " + err.message); }
   ASST_IMG = null; $("#asstImg").value = ""; $("#asstImgName").textContent = "";
 });
@@ -120,7 +120,7 @@ function addBubble(who, text) {
   div.scrollIntoView({ block: "end" });
   return div;
 }
-function renderAnswer(text) {
+function renderAnswer(text, usage) {
   const div = document.createElement("div");
   div.className = "bubble dcr";
   // pull verdict
@@ -137,6 +137,7 @@ function renderAnswer(text) {
   text = text.replace(/```svg\s*([\s\S]*?)```/i, (_, s) => { svg = s.replace(/<script[\s\S]*?<\/script>/gi, ""); return ""; });
   html += "<div>" + escapeHtml(text.trim()).replace(/\n/g, "<br>") + "</div>";
   if (svg) html += `<div class="diagram">${svg}</div>`;
+  if (usage && usage.input) html += `<div class="hint" style="margin-top:6px">~${usage.input} in / ${usage.output} out tokens</div>`;
   div.innerHTML = html;
   $("#asstThread").appendChild(div);
   div.scrollIntoView({ block: "end" });

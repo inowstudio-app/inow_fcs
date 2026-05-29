@@ -59,11 +59,20 @@ def ask(question: str, image_bytes: bytes | None = None, image_media_type: str |
             "data": base64.b64encode(image_bytes).decode("ascii")}})
     content.append({"type": "text", "text": question or "Please review the attached sketch against the TN DCR."})
 
-    client = anthropic.Anthropic()
-    msg = client.messages.create(
-        model=MODEL, max_tokens=1200,
-        system=SYSTEM + _kb(),
-        messages=[{"role": "user", "content": content}],
-    )
-    text = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
-    return {"configured": True, "answer": text, "model": MODEL}
+    try:
+        client = anthropic.Anthropic()
+        msg = client.messages.create(
+            model=MODEL, max_tokens=1200,
+            system=SYSTEM + _kb(),
+            messages=[{"role": "user", "content": content}],
+        )
+        text = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+        if not text.strip():
+            text = "(The model returned no text — try rephrasing your question.)"
+        usage = getattr(msg, "usage", None)
+        return {"configured": True, "answer": text, "model": MODEL,
+                "usage": {"input": getattr(usage, "input_tokens", None),
+                          "output": getattr(usage, "output_tokens", None)} if usage else None}
+    except Exception as e:  # surface the real cause to the UI
+        return {"configured": True, "model": MODEL,
+                "answer": f"⚠ Assistant error: {type(e).__name__}: {e}"}
