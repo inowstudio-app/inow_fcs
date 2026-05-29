@@ -52,6 +52,26 @@
     sel.innerHTML = "";
     var byBook = {};
     (topicsData.books || []).forEach(function (b) { byBook[b.id] = b.label; });
+
+    // --- whole-book / all-books search options (always at the top) ---
+    var wog = document.createElement("optgroup");
+    wog.label = "Search whole book (no specific topic)";
+    function wholeOpt(bookId, label) {
+      var o = document.createElement("option");
+      o.value = "__WHOLE__|" + bookId + "|0|" + label;
+      o.textContent = label;
+      wog.appendChild(o);
+    }
+    if (bookFilter) {
+      wholeOpt(bookFilter, "📚 Entire " + (byBook[bookFilter] || bookFilter));
+    } else {
+      wholeOpt("", "🌐 All books — search everything");
+      (topicsData.books || []).forEach(function (b) {
+        wholeOpt(b.id, "📚 Entire " + (byBook[b.id] || b.id));
+      });
+    }
+    sel.appendChild(wog);
+
     var shown = 0;
     (topicsData.chapters || []).forEach(function (ch) {
       if (shown > 1500) return;                 // safety cap on very broad filters
@@ -75,7 +95,15 @@
       });
       sel.appendChild(og);
     });
-    if (!sel.children.length) sel.innerHTML = '<option value="">— no topics match —</option>';
+    if (shown === 0) {
+      var nog = document.createElement("optgroup");
+      nog.label = "Topics";
+      var io = document.createElement("option");
+      io.value = ""; io.disabled = true;
+      io.textContent = "— no topic titles match; use ‘Search whole book’ above —";
+      nog.appendChild(io);
+      sel.appendChild(nog);
+    }
     onTopicChange();
   }
 
@@ -83,13 +111,19 @@
     var sel = $("nfTopic");
     if (!sel || !sel.value) return null;
     var p = sel.value.split("|");
-    return { book: p[0], page: parseInt(p[1], 10), page_end: parseInt(p[2], 10), title: p[3] };
+    if (p[0] === "__WHOLE__") {
+      return { whole: true, book: p[1] || "", title: p.slice(3).join("|") || "Entire book" };
+    }
+    return { book: p[0], page: parseInt(p[1], 10), page_end: parseInt(p[2], 10), title: p.slice(3).join("|") };
   }
 
   function onTopicChange() {
     var t = selectedTopic();
     var lab = $("nfTopicSel");
-    if (lab) lab.textContent = t ? ("Topic: " + t.title) : "No topic selected";
+    if (!lab) return;
+    if (!t) lab.textContent = "No topic selected";
+    else if (t.whole) lab.textContent = "Searching: " + t.title + " (whole book)";
+    else lab.textContent = "Topic: " + t.title;
   }
 
   // ---- canvas (book pages, sketch, diagram) ----
@@ -152,7 +186,10 @@
 
     var fd = new FormData();
     fd.append("question", question);
-    if (topic) {
+    if (topic && topic.whole) {
+      if (topic.book) fd.append("book", topic.book);   // omit book -> search across all books
+      fd.append("topic_title", topic.title);
+    } else if (topic) {
       fd.append("book", topic.book);
       fd.append("topic_title", topic.title);
       fd.append("topic_page", topic.page);

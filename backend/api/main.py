@@ -32,7 +32,7 @@ from fastapi import Response, Form
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
 
-APP_VERSION = "2.2-neufert"
+APP_VERSION = "2.3-wholebook"
 app = FastAPI(title="DCR Feasibility & Compliance System", version=APP_VERSION)
 
 # --- team-only access gate (session cookie + login page; real logout) ---

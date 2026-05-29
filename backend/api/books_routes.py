@@ -122,8 +122,10 @@ async def ask(
     model = pick_model(client)
 
     book = book or None
+    # whole-book / all-books mode (no topic anchor) -> widen the search net for recall
+    max_ctx = 5 if topic_page else 8
     pages = books.context_pages(question, book=book, topic_page=topic_page,
-                                topic_page_end=topic_page_end, max_pages=5)
+                                topic_page_end=topic_page_end, max_pages=max_ctx)
     if not pages and topic_page and book:
         pages = [{"book": book, "page": topic_page}]
 
