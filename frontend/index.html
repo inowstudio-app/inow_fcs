@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DCR Feasibility System — Tamil Nadu</title>
-  <link rel="stylesheet" href="style.css?v=19" />
+  <link rel="stylesheet" href="style.css?v=20" />
 </head>
 <body>
   <header class="no-print">
@@ -78,6 +78,18 @@
             <input id="roadw_w" data-u="len" type="number" step="0.1" placeholder="width" disabled /></div>
         </div>
         <p class="hint" id="frontNote"></p>
+
+        <h3 class="sec">Corner splays <span class="hint">— tick a cut corner &amp; its length</span></h3>
+        <div class="roads">
+          <div class="road-row"><label class="ck"><input type="checkbox" id="splay_ne" data-corner="ne" /> NE</label>
+            <input id="splayd_ne" data-u="len" type="number" step="0.1" placeholder="splay" disabled /></div>
+          <div class="road-row"><label class="ck"><input type="checkbox" id="splay_nw" data-corner="nw" /> NW</label>
+            <input id="splayd_nw" data-u="len" type="number" step="0.1" placeholder="splay" disabled /></div>
+          <div class="road-row"><label class="ck"><input type="checkbox" id="splay_se" data-corner="se" /> SE</label>
+            <input id="splayd_se" data-u="len" type="number" step="0.1" placeholder="splay" disabled /></div>
+          <div class="road-row"><label class="ck"><input type="checkbox" id="splay_sw" data-corner="sw" /> SW</label>
+            <input id="splayd_sw" data-u="len" type="number" step="0.1" placeholder="splay" disabled /></div>
+        </div>
 
         <label>Plot type
           <select name="plot_type">
@@ -242,6 +254,6 @@
       </div>
     </section>
   </main>
-  <script src="app.js?v=19"></script>
+  <script src="app.js?v=20"></script>
 </body>
 </html>

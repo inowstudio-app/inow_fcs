@@ -69,6 +69,7 @@ $("#resetBtn").addEventListener("click", () => {
   ["survey_no", "village", "area_sqm", "side_n", "side_e", "side_s", "side_w"].forEach(n => form[n].value = "");
   form.polygon.value = ""; form.parking_area_class.value = ""; form.district.value = ""; form.plot_type.value = "individual";
   ["n", "e", "s", "w"].forEach(d => { $("#road_" + d).checked = false; $("#roadw_" + d).value = ""; $("#roadw_" + d).disabled = true; });
+  ["ne", "nw", "se", "sw"].forEach(c => { $("#splay_" + c).checked = false; $("#splayd_" + c).value = ""; $("#splayd_" + c).disabled = true; });
   AREA_MANUAL = false; $("#frontNote").textContent = "";
   $("#fmbExtract").hidden = true; $("#fmbPreviewWrap").hidden = true;
   $("#fmbStatus").textContent = "Optional — auto-extracts cadastral details & dimensions.";
@@ -235,6 +236,16 @@ form.district.addEventListener("change", () => {
 });
 ["side_n", "side_e", "side_s", "side_w"].forEach(n => form[n].addEventListener("input", recalcArea));
 form.area_sqm.addEventListener("input", () => { AREA_MANUAL = form.area_sqm.value !== ""; });
+["ne", "nw", "se", "sw"].forEach(c => {
+  $("#splay_" + c).addEventListener("change", (e) => { $("#splayd_" + c).disabled = !e.target.checked; if (!e.target.checked) $("#splayd_" + c).value = ""; recalcArea(); });
+  $("#splayd_" + c).addEventListener("input", recalcArea);
+});
+function collectSplays() {  // -> { NE: lengthMetres, ... }
+  const s = {};
+  ["ne", "nw", "se", "sw"].forEach(c => { if ($("#splay_" + c).checked) { const v = +$("#splayd_" + c).value; if (v > 0) s[c.toUpperCase()] = toM(v, "len"); } });
+  return s;
+}
+const splayAreaM = () => Object.values(collectSplays()).reduce((a, L) => a + 0.5 * L * L, 0);
 
 function collectRoads() {           // -> { N: widthMetres, ... }
   const r = {};
@@ -255,7 +266,10 @@ function avgPos(a, b) { const v = [a, b].filter(x => x > 0); return v.length ? v
 function recalcArea() {
   if (AREA_MANUAL) return;
   const wd = avgPos(+form.side_n.value, +form.side_s.value), dp = avgPos(+form.side_e.value, +form.side_w.value);
-  if (wd > 0 && dp > 0) form.area_sqm.value = roundU(wd * dp, "area");  // sides & area share the display unit
+  if (wd > 0 && dp > 0) {
+    const splayDisp = splayAreaM() * (U === "ft" ? SQFT : 1);   // splay triangles, in display units²
+    form.area_sqm.value = roundU(Math.max(0, wd * dp - splayDisp), "area");
+  }
 }
 
 // ===== gather plot inputs (convert to metres) =====
@@ -280,6 +294,7 @@ function plotBody() {
   b.front_edge_idx = ({ S: 0, E: 1, N: 2, W: 3 })[front] ?? 0;
   b.sides = { N, E, S, W: Wd };       // metres, for the oriented diagram
   b.front_side = front;               // compass letter of the front (widest road)
+  b.splays = collectSplays();         // {NE:metres,...} corner cuts (diagram + area)
   const poly = form.polygon.value.trim();
   if (poly) {
     const pts = poly.split(/\n+/).map(l => l.split(",").map(Number)).filter(p => p.length === 2 && !p.some(isNaN));
@@ -632,28 +647,45 @@ function drawOverlay(s, inputs) {
   const T = (x, y, t, anchor = "middle", rot = 0, fill = "#66758a", fw = "400") =>
     `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="10" fill="${fill}" font-weight="${fw}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}>${t}</text>`;
   const lenN = sd.N || W, lenS = sd.S || W, lenE = sd.E || D, lenW = sd.W || D;
-  let o = `<rect x="${ox}" y="${oy}" width="${pw}" height="${ph}" fill="rgba(217,77,58,.10)" stroke="#334155" stroke-width="2"/>`;
-  if (hasB && bw > 1 && bh > 1) o += `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="rgba(31,157,92,.18)" stroke="#1f9d5c" stroke-width="1.5"/>`;
+  // ----- chamfered plot polygon (corner splays) -----
+  const sp = inputs.splays || {};
+  const L = c => (sp[c] || 0) * sc;   // splay length in screen px
+  const NWx = ox, NWy = oy, NEx = ox + pw, NEy = oy, SEx = ox + pw, SEy = oy + ph, SWx = ox, SWy = oy + ph;
+  const ppts = [
+    [NWx + L("NW"), NWy], [NEx - L("NE"), NEy],
+    [NEx, NEy + L("NE")], [SEx, SEy - L("SE")],
+    [SEx - L("SE"), SEy], [SWx + L("SW"), SWy],
+    [SWx, SWy - L("SW")], [NWx, NWy + L("NW")],
+  ];
+  let o = `<polygon points="${ppts.map(p => p.join(",")).join(" ")}" fill="rgba(217,77,58,.10)" stroke="#334155" stroke-width="2"/>`;
+  if (hasB && geo.buildable && geo.buildable.length)
+    o += `<polygon points="${geo.buildable.map(mp).map(p => p.join(",")).join(" ")}" fill="rgba(31,157,92,.18)" stroke="#1f9d5c" stroke-width="1.5"/>`;
   // plot side lengths
   o += T(ox + pw / 2, oy - 32, fmtLen(lenN, false));
   o += T(ox + pw / 2, oy + ph + 36, fmtLen(lenS, false));
   o += T(ox - 36, oy + ph / 2, fmtLen(lenW, false), "middle", -90);
   o += T(ox + pw + 36, oy + ph / 2, fmtLen(lenE, false), "middle", 90);
   if (hasB) {
-    // setback gaps
     if (by - oy > 8) o += T(ox + pw / 2, oy + (by - oy) / 2 + 3, fmtLen(gap.top, false));
     if ((oy + ph) - (by + bh) > 8) o += T(ox + pw / 2, (by + bh) + ((oy + ph) - (by + bh)) / 2 + 3, fmtLen(gap.bottom, false));
     if (bx - ox > 8) o += T(ox + (bx - ox) / 2, oy + ph / 2, fmtLen(gap.left, false));
     if ((ox + pw) - (bx + bw) > 8) o += T((bx + bw) + ((ox + pw) - (bx + bw)) / 2, oy + ph / 2, fmtLen(gap.right, false));
-    // buildable inner dims
     o += T(bx + bw / 2, by + bh / 2 - 6, "buildable", "middle", 0, "#1f9d5c", "600");
     o += T(bx + bw / 2, by + bh / 2 + 9, fmtLen(bw / sc, false), "middle", 0, "#1f9d5c");
     o += T(bx + bw / 2, by + bh / 2 + 23, "× " + fmtLen(bh / sc, false), "middle", 0, "#1f9d5c");
   }
-  // FRONT / ROAD marker on the actual front side
-  const fp = front === "N" ? [ox + pw / 2, oy - 50] : front === "S" ? [ox + pw / 2, oy + ph + 52]
-    : front === "E" ? [ox + pw + 52, oy + ph / 2 - 14] : front === "W" ? [ox - 52, oy + ph / 2 - 14] : [ox + pw / 2, oy + ph + 52];
-  o += `<text x="${fp[0]}" y="${fp[1]}" text-anchor="middle" font-size="11" fill="#1668b3" font-weight="700">▲ FRONT / ROAD</text>`;
+  // splay dimension labels at each cut corner
+  const cMid = { NE: [NEx - L("NE") / 2 + 6, NEy + L("NE") / 2], NW: [NWx + L("NW") / 2 - 6, NWy + L("NW") / 2],
+    SE: [SEx - L("SE") / 2 + 6, SEy - L("SE") / 2], SW: [SWx + L("SW") / 2 - 6, SWy - L("SW") / 2] };
+  Object.keys(sp).forEach(c => { if (sp[c] > 0 && cMid[c]) o += T(cMid[c][0], cMid[c][1], "splay " + fmtLen(sp[c], false), "middle", 0, "#b97400", "600"); });
+  // road markers — front side + every other abutting road
+  const roads = inputs.road_sides || {};
+  const sidePos = { N: [ox + pw / 2, oy - 50], S: [ox + pw / 2, oy + ph + 52], E: [ox + pw + 50, oy + ph / 2 - 16], W: [ox - 50, oy + ph / 2 - 16] };
+  Object.keys(roads).forEach(side => {
+    const p = sidePos[side]; if (!p) return;
+    const isFront = side === front;
+    o += `<text x="${p[0]}" y="${p[1]}" text-anchor="middle" font-size="${isFront ? 11 : 10}" fill="#1668b3" font-weight="${isFront ? 700 : 600}">${isFront ? "▲ FRONT/ROAD " : "ROAD "}${fmtLen(roads[side], false)}</text>`;
+  });
   // North arrow (top-right)
   o += `<g transform="translate(${VB - 22},26)"><line x1="0" y1="12" x2="0" y2="-8" stroke="#334155" stroke-width="1.5"/><path d="M0,-13 L-5,-4 L5,-4 Z" fill="#334155"/><text x="0" y="-16" text-anchor="middle" font-size="11" fill="#334155" font-weight="700">N</text></g>`;
   svg.setAttribute("viewBox", `0 0 ${VB} ${VBH}`);

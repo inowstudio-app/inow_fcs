@@ -65,7 +65,7 @@ def run_scenarios(plot: Plot) -> dict:
     if len([w for w in rs.values() if w]) > 1:
         widest = max(rs.items(), key=lambda kv: kv[1] or 0)
         site_notes.append(f"Corner/multi-road plot: front setback taken from the widest road ({widest[0]} side, "
-                          f"{widest[1]} m); other road sides take side/rear setback (Rule 35 Expl.2(iv)).")
+                          f"{round(widest[1], 2)} m); other road sides take side/rear setback (Rule 35 Expl.2(iv)).")
     if plot.plot_type == "gated":
         site_notes.append("Gated / approved-layout plot: roads & OSR are handled at the layout level; "
                           "individual-plot setbacks per Rule 35 still apply unless the sanctioned layout specifies otherwise.")
