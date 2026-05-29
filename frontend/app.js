@@ -71,6 +71,7 @@ document.querySelectorAll(".tab[data-view]").forEach(t => t.addEventListener("cl
   $("#primaryBtn").style.display = fullWidth ? "none" : "";
   $("#primaryBtn").textContent = VIEW === "compliance" ? "Check compliance →" : "Analyse this plot →";
   $("#inputPanel").style.display = fullWidth ? "none" : "";
+  document.querySelector("main").classList.toggle("full", fullWidth);
   showView();
   if (VIEW === "projects") loadProjects();
   if (VIEW === "assistant") checkAssistant();
@@ -99,6 +100,7 @@ $("#asstSend").addEventListener("click", async () => {
   const q = $("#asstQ").value.trim();
   if (!q && !ASST_IMG) return;
   addBubble("you", q + (ASST_IMG ? "  [+ sketch]" : ""));
+  if (ASST_IMG) showCanvas(`<img src="${URL.createObjectURL(ASST_IMG)}" alt="sketch">`, "Your sketch");
   $("#asstQ").value = "";
   const thinking = addBubble("dcr", "…thinking…");
   const fd = new FormData();
@@ -136,11 +138,15 @@ function renderAnswer(text, usage) {
   let svg = "";
   text = text.replace(/```svg\s*([\s\S]*?)```/i, (_, s) => { svg = s.replace(/<script[\s\S]*?<\/script>/gi, ""); return ""; });
   html += "<div>" + escapeHtml(text.trim()).replace(/\n/g, "<br>") + "</div>";
-  if (svg) html += `<div class="diagram">${svg}</div>`;
+  if (svg) html += `<div class="hint" style="margin-top:6px">▶ diagram shown on the right →</div>`;
   if (usage && usage.input) html += `<div class="hint" style="margin-top:6px">~${usage.input} in / ${usage.output} out tokens</div>`;
   div.innerHTML = html;
   $("#asstThread").appendChild(div);
   div.scrollIntoView({ block: "end" });
+  if (svg) showCanvas(svg, "Diagram");
+}
+function showCanvas(inner, label) {
+  $("#asstCanvas").innerHTML = (label ? `<div class="canvas-label">${label}</div>` : "") + inner;
 }
 function escapeHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 

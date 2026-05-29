@@ -3,8 +3,9 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# System libs: libgomp1 is needed by onnxruntime (RapidOCR for FMB extraction).
-RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+# System libs for RapidOCR/onnxruntime + OpenCV: libgomp1, libGL, glib.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgomp1 libglib2.0-0 libgl1 libsm6 libxext6 libxrender1 && rm -rf /var/lib/apt/lists/*
 
 # Python deps first (cached layer). Wheels for PyMuPDF/Shapely/ezdxf/reportlab/onnxruntime are self-contained.
 COPY backend/requirements.txt backend/requirements.txt

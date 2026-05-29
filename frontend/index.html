@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DCR Feasibility System — Tamil Nadu</title>
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=15" />
 </head>
 <body>
   <header class="no-print">
@@ -186,13 +186,21 @@
       <div id="view-assistant" class="view" hidden>
         <h2 class="rh-title">DCR Assistant <span class="hint">— ask design doubts, grounded in TNCDBR-2019</span></h2>
         <div id="asstNotice" class="ex-miss" hidden></div>
-        <div id="asstThread" class="thread"></div>
-        <div class="ask-row">
-          <label class="file-btn" title="Attach a hand sketch / reference">🖼 Sketch<input type="file" id="asstImg" accept="image/*" hidden /></label>
-          <textarea id="asstQ" rows="2" placeholder="e.g. Can an open staircase extend into the side setback for a 2-storey house? Can a 1st-floor toilet project into the setback?"></textarea>
-          <button id="asstSend" class="run" style="width:auto;white-space:nowrap">Ask →</button>
+        <div class="asst-grid">
+          <div class="asst-left">
+            <div id="asstThread" class="thread"></div>
+            <div class="ask-row">
+              <label class="file-btn" title="Attach a hand sketch / reference">🖼 Sketch<input type="file" id="asstImg" accept="image/*" hidden /></label>
+              <textarea id="asstQ" rows="2" placeholder="e.g. Can an open staircase extend into the side setback for a 2-storey house?"></textarea>
+              <button id="asstSend" class="run" style="width:auto;white-space:nowrap">Ask →</button>
+            </div>
+            <div id="asstImgName" class="hint"></div>
+          </div>
+          <div class="asst-right">
+            <div class="canvas-head">Visual / diagram</div>
+            <div id="asstCanvas" class="asst-canvas"><p class="placeholder">Diagrams the assistant draws, and sketches you attach, appear here — large.</p></div>
+          </div>
         </div>
-        <div id="asstImgName" class="hint"></div>
         <p class="disclaimer">Indicative guidance per TNCDBR-2019. Confirm with the sanctioning authority.</p>
       </div>
 
@@ -203,6 +211,6 @@
       </div>
     </section>
   </main>
-  <script src="app.js?v=14"></script>
+  <script src="app.js?v=15"></script>
 </body>
 </html>
