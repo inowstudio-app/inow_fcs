@@ -295,14 +295,32 @@ function plotBody() {
   b.sides = { N, E, S, W: Wd };       // metres, for the oriented diagram
   b.front_side = front;               // compass letter of the front (widest road)
   b.splays = collectSplays();         // {NE:metres,...} corner cuts (diagram + area)
-  const poly = form.polygon.value.trim();
-  if (poly) {
-    const pts = poly.split(/\n+/).map(l => l.split(",").map(Number)).filter(p => p.length === 2 && !p.some(isNaN));
-    if (pts.length >= 3) b.polygon = pts;
+  const polyText = form.polygon.value.trim();
+  let polygon = null;
+  if (polyText) {
+    const pts = polyText.split(/\n+/).map(l => l.split(",").map(Number)).filter(p => p.length === 2 && !p.some(isNaN));
+    if (pts.length >= 3) polygon = pts;
+  } else {
+    polygon = reconstructQuad(N, E, S, Wd);   // build the real quadrilateral from 4 sides
   }
+  if (polygon && polygon.length >= 3) b.polygon = polygon;
   return b;
 }
 function setLen(name, metres) { form[name].value = roundU(convertVal(metres, "len", "m", U), "len"); }
+
+// Reconstruct a quadrilateral (metres) from the 4 side lengths. Vertices order
+// [SW, SE, NE, NW] so engine edges stay South=0/East=1/North=2/West=3.
+function reconstructQuad(N, E, S, Wd) {
+  if (!(N > 0 && E > 0 && S > 0 && Wd > 0)) return null;
+  const SW = [0, 0], SE = [S, 0];
+  if (Math.abs(N - S) > 0.05) {  // horizontal-top solution honouring all four sides
+    const u = ((E * E - Wd * Wd) / (N - S) - (N - S)) / 2;
+    const h2 = Wd * Wd - u * u;
+    if (h2 > 0.05) { const h = Math.sqrt(h2); return [SW, SE, [u + N, h], [u, h]]; }
+  }
+  // fallback: trapezoid with vertical sides (honours S, E, W; top ≈ N)
+  return [SW, SE, [S, E], [0, Wd]];
+}
 
 function validPlot(b) {
   if (!(b.area_sqm > 0 && b.width_m > 0 && b.depth_m > 0)) {
@@ -620,73 +638,59 @@ async function delProject(id) { if (confirm("Delete project #" + id + "?")) { aw
 function fmt(n) { return Number(n).toLocaleString("en-IN"); }
 function kpi(v, l, s) { return `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div><div class="s">${s}</div></div>`; }
 
-// North-up oriented diagram with plot/setback/buildable dimensions, N arrow, front marker
+// North-up diagram drawn from the ACTUAL plot polygon (proportional to the side lengths),
+// with edge-relative side lengths, setbacks, splay chamfers, all road markers, N arrow.
+const norm2 = v => { const L = Math.hypot(v[0], v[1]) || 1; return [v[0] / L, v[1] / L]; };
+const centroidM = poly => { let x = 0, y = 0; poly.forEach(p => { x += p[0]; y += p[1]; }); return [x / poly.length, y / poly.length]; };
+const edgeLenM = (poly, i) => { const a = poly[i], b = poly[(i + 1) % poly.length]; return Math.hypot(b[0] - a[0], b[1] - a[1]); };
+function chamfer(poly, byIdx) {
+  const n = poly.length, out = [];
+  for (let i = 0; i < n; i++) {
+    const L = byIdx[i] || 0, V = poly[i], P = poly[(i - 1 + n) % n], Nx = poly[(i + 1) % n];
+    if (L <= 0) { out.push(V); continue; }
+    const np = norm2([P[0] - V[0], P[1] - V[1]]), nn = norm2([Nx[0] - V[0], Nx[1] - V[1]]);
+    out.push([V[0] + np[0] * L, V[1] + np[1] * L]); out.push([V[0] + nn[0] * L, V[1] + nn[1] * L]);
+  }
+  return out;
+}
 function drawOverlay(s, inputs) {
-  const svg = $("#overlay");
-  const geo = s.geometry;
-  if (!geo || !geo.plot) { svg.innerHTML = ""; return; }
-  const xs = geo.plot.map(p => p[0]), ys = geo.plot.map(p => p[1]);
+  const svg = $("#overlay"); const geo = s.geometry;
+  if (!geo || !geo.plot || geo.plot.length < 3) { svg.innerHTML = ""; return; }
+  const sp = inputs.splays || {}, cornerIdx = { SW: 0, SE: 1, NE: 2, NW: 3 };
+  const splayByIdx = {}; Object.keys(sp).forEach(c => { if (cornerIdx[c] != null && sp[c] > 0) splayByIdx[cornerIdx[c]] = sp[c]; });
+  const plotM = chamfer(geo.plot, splayByIdx), bldM = geo.buildable || [];
+  const all = plotM.concat(bldM), xs = all.map(p => p[0]), ys = all.map(p => p[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  const W = maxX - minX, D = maxY - minY;
-  const VB = 460, VBH = 480, pad = 84;
-  const sc = Math.min((VB - 2 * pad) / (W || 1), (VBH - 2 * pad) / (D || 1));
-  const pw = W * sc, ph = D * sc, ox = (VB - pw) / 2, oy = (VBH - ph) / 2;
-  const mp = ([x, y]) => [ox + (x - minX) * sc, oy + (maxY - y) * sc];  // North (max y) at top
-  let bx = ox, by = oy, bw = pw, bh = ph, hasB = false;
-  if (geo.buildable && geo.buildable.length) {
-    const bp = geo.buildable.map(mp), bxs = bp.map(p => p[0]), bys = bp.map(p => p[1]);
-    bx = Math.min(...bxs); by = Math.min(...bys); bw = Math.max(...bxs) - bx; bh = Math.max(...bys) - by; hasB = true;
+  const W = (maxX - minX) || 1, D = (maxY - minY) || 1, VB = 460, VBH = 480, pad = 90;
+  const sc = Math.min((VB - 2 * pad) / W, (VBH - 2 * pad) / D);
+  const ox = (VB - W * sc) / 2, oy = (VBH - D * sc) / 2;
+  const mp = ([x, y]) => [ox + (x - minX) * sc, oy + (maxY - y) * sc];   // North (max y) at top
+  const T = (x, y, t, fill = "#66758a", fw = "400", fs = 10) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="${fs}" fill="${fill}" font-weight="${fw}">${t}</text>`;
+  const plotS = plotM.map(mp), bldS = bldM.map(mp), cenS = mp(centroidM(geo.plot)), n = geo.plot.length;
+  const sb = s.setbacks_m, sd = inputs.sides || {}, fEdge = inputs.front_edge_idx ?? 0, rEdge = (fEdge + 2) % n;
+  const sideByEdge = [sd.S, sd.E, sd.N, sd.W], roadEdge = { N: 2, E: 1, S: 0, W: 3 };
+  const emid = i => { const a = mp(geo.plot[i]), b = mp(geo.plot[(i + 1) % n]); return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; };
+  const outv = (m, d) => { let dx = m[0] - cenS[0], dy = m[1] - cenS[1]; const L = Math.hypot(dx, dy) || 1; return [m[0] + dx / L * d, m[1] + dy / L * d]; };
+
+  let o = `<polygon points="${plotS.map(p => p.join(",")).join(" ")}" fill="rgba(217,77,58,.10)" stroke="#334155" stroke-width="2"/>`;
+  if (bldS.length >= 3) o += `<polygon points="${bldS.map(p => p.join(",")).join(" ")}" fill="rgba(31,157,92,.18)" stroke="#1f9d5c" stroke-width="1.5"/>`;
+  for (let i = 0; i < n; i++) {
+    const m = emid(i);
+    const sl = (n === 4 && sideByEdge[i]) ? sideByEdge[i] : edgeLenM(geo.plot, i);
+    const op = outv(m, 22); o += T(op[0], op[1] + 3, fmtLen(sl, false));
+    const sv = i === fEdge ? sb.front : i === rEdge ? sb.rear : sb.side;
+    const ip = outv(m, -15); o += T(ip[0], ip[1] + 3, fmtLen(sv, false), "#1f9d5c");
   }
-  const sb = s.setbacks_m, front = inputs.front_side, sd = inputs.sides || {};
-  const gap = {
-    top: front === "N" ? sb.front : front === "S" ? sb.rear : sb.side,
-    bottom: front === "S" ? sb.front : front === "N" ? sb.rear : sb.side,
-    right: front === "E" ? sb.front : front === "W" ? sb.rear : sb.side,
-    left: front === "W" ? sb.front : front === "E" ? sb.rear : sb.side,
-  };
-  const T = (x, y, t, anchor = "middle", rot = 0, fill = "#66758a", fw = "400") =>
-    `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="10" fill="${fill}" font-weight="${fw}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}>${t}</text>`;
-  const lenN = sd.N || W, lenS = sd.S || W, lenE = sd.E || D, lenW = sd.W || D;
-  // ----- chamfered plot polygon (corner splays) -----
-  const sp = inputs.splays || {};
-  const L = c => (sp[c] || 0) * sc;   // splay length in screen px
-  const NWx = ox, NWy = oy, NEx = ox + pw, NEy = oy, SEx = ox + pw, SEy = oy + ph, SWx = ox, SWy = oy + ph;
-  const ppts = [
-    [NWx + L("NW"), NWy], [NEx - L("NE"), NEy],
-    [NEx, NEy + L("NE")], [SEx, SEy - L("SE")],
-    [SEx - L("SE"), SEy], [SWx + L("SW"), SWy],
-    [SWx, SWy - L("SW")], [NWx, NWy + L("NW")],
-  ];
-  let o = `<polygon points="${ppts.map(p => p.join(",")).join(" ")}" fill="rgba(217,77,58,.10)" stroke="#334155" stroke-width="2"/>`;
-  if (hasB && geo.buildable && geo.buildable.length)
-    o += `<polygon points="${geo.buildable.map(mp).map(p => p.join(",")).join(" ")}" fill="rgba(31,157,92,.18)" stroke="#1f9d5c" stroke-width="1.5"/>`;
-  // plot side lengths
-  o += T(ox + pw / 2, oy - 32, fmtLen(lenN, false));
-  o += T(ox + pw / 2, oy + ph + 36, fmtLen(lenS, false));
-  o += T(ox - 36, oy + ph / 2, fmtLen(lenW, false), "middle", -90);
-  o += T(ox + pw + 36, oy + ph / 2, fmtLen(lenE, false), "middle", 90);
-  if (hasB) {
-    if (by - oy > 8) o += T(ox + pw / 2, oy + (by - oy) / 2 + 3, fmtLen(gap.top, false));
-    if ((oy + ph) - (by + bh) > 8) o += T(ox + pw / 2, (by + bh) + ((oy + ph) - (by + bh)) / 2 + 3, fmtLen(gap.bottom, false));
-    if (bx - ox > 8) o += T(ox + (bx - ox) / 2, oy + ph / 2, fmtLen(gap.left, false));
-    if ((ox + pw) - (bx + bw) > 8) o += T((bx + bw) + ((ox + pw) - (bx + bw)) / 2, oy + ph / 2, fmtLen(gap.right, false));
-    o += T(bx + bw / 2, by + bh / 2 - 6, "buildable", "middle", 0, "#1f9d5c", "600");
-    o += T(bx + bw / 2, by + bh / 2 + 9, fmtLen(bw / sc, false), "middle", 0, "#1f9d5c");
-    o += T(bx + bw / 2, by + bh / 2 + 23, "× " + fmtLen(bh / sc, false), "middle", 0, "#1f9d5c");
+  if (bldS.length) {
+    const bxs = bldS.map(p => p[0]), bys = bldS.map(p => p[1]);
+    const cx = (Math.min(...bxs) + Math.max(...bxs)) / 2, cy = (Math.min(...bys) + Math.max(...bys)) / 2;
+    o += T(cx, cy - 6, "buildable", "#1f9d5c", "600");
+    o += T(cx, cy + 9, fmtLen((Math.max(...bxs) - Math.min(...bxs)) / sc, false), "#1f9d5c");
+    o += T(cx, cy + 23, "× " + fmtLen((Math.max(...bys) - Math.min(...bys)) / sc, false), "#1f9d5c");
   }
-  // splay dimension labels at each cut corner
-  const cMid = { NE: [NEx - L("NE") / 2 + 6, NEy + L("NE") / 2], NW: [NWx + L("NW") / 2 - 6, NWy + L("NW") / 2],
-    SE: [SEx - L("SE") / 2 + 6, SEy - L("SE") / 2], SW: [SWx + L("SW") / 2 - 6, SWy - L("SW") / 2] };
-  Object.keys(sp).forEach(c => { if (sp[c] > 0 && cMid[c]) o += T(cMid[c][0], cMid[c][1], "splay " + fmtLen(sp[c], false), "middle", 0, "#b97400", "600"); });
-  // road markers — front side + every other abutting road
+  Object.keys(sp).forEach(c => { const i = cornerIdx[c]; if (sp[c] > 0 && i != null && geo.plot[i]) { const v = outv(mp(geo.plot[i]), -2); o += T(v[0], v[1], "splay " + fmtLen(sp[c], false), "#b97400", "600"); } });
   const roads = inputs.road_sides || {};
-  const sidePos = { N: [ox + pw / 2, oy - 50], S: [ox + pw / 2, oy + ph + 52], E: [ox + pw + 50, oy + ph / 2 - 16], W: [ox - 50, oy + ph / 2 - 16] };
-  Object.keys(roads).forEach(side => {
-    const p = sidePos[side]; if (!p) return;
-    const isFront = side === front;
-    o += `<text x="${p[0]}" y="${p[1]}" text-anchor="middle" font-size="${isFront ? 11 : 10}" fill="#1668b3" font-weight="${isFront ? 700 : 600}">${isFront ? "▲ FRONT/ROAD " : "ROAD "}${fmtLen(roads[side], false)}</text>`;
-  });
-  // North arrow (top-right)
+  Object.keys(roads).forEach(side => { const i = roadEdge[side]; if (i == null || i >= n) return; const m = outv(emid(i), 42), isF = i === fEdge; o += T(m[0], m[1], (isF ? "▲ FRONT/ROAD " : "ROAD ") + fmtLen(roads[side], false), "#1668b3", isF ? 700 : 600, isF ? 11 : 10); });
   o += `<g transform="translate(${VB - 22},26)"><line x1="0" y1="12" x2="0" y2="-8" stroke="#334155" stroke-width="1.5"/><path d="M0,-13 L-5,-4 L5,-4 Z" fill="#334155"/><text x="0" y="-16" text-anchor="middle" font-size="11" fill="#334155" font-weight="700">N</text></g>`;
   svg.setAttribute("viewBox", `0 0 ${VB} ${VBH}`);
   svg.innerHTML = o;
