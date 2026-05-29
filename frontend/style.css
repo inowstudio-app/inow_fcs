@@ -40,6 +40,11 @@ input:focus, select:focus { outline: 2px solid var(--brand); border-color: var(-
 .run { width: 100%; margin-top: 6px; background: var(--brand); color: #fff; border: 0; padding: 12px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; }
 .run:hover { background: var(--brand-d); }
 .fmb-preview img { width: 100%; border: 1px solid var(--line); border-radius: 8px; }
+.extract { font-size: 12px; margin: 6px 0 2px; line-height: 1.45; }
+.ex-ok { color: var(--green); font-weight: 600; }
+.ex-miss { color: var(--amber); font-weight: 600; margin-top: 3px; }
+.ex-dim { color: var(--muted); margin-top: 3px; }
+input.need { outline: 2px solid var(--amber); border-color: var(--amber); background: #fffaf0; }
 
 .placeholder { color: var(--muted); text-align: center; padding: 70px 20px; }
 

@@ -10,9 +10,10 @@ Future modules slot in as additional routers without touching this core:
 from __future__ import annotations
 import os, sys
 
-import base64, secrets
+import hashlib, secrets
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 # make the backend package importable when launched via uvicorn from backend/
@@ -30,30 +31,71 @@ from fastapi import Response
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
 
-APP_VERSION = "1.1-depthfix"
+APP_VERSION = "1.2-login"
 app = FastAPI(title="DCR Feasibility & Compliance System", version=APP_VERSION)
 
-# --- team-only access gate (HTTP Basic Auth) ---
+# --- team-only access gate (session cookie + login page; real logout) ---
 # Enforced ONLY when APP_PASSWORD is set (so local dev stays open).
 APP_USER = os.environ.get("APP_USER", "team")
 APP_PASSWORD = os.environ.get("APP_PASSWORD")
+SESSION_TOKEN = hashlib.sha256(f"dcr|{APP_USER}|{APP_PASSWORD}".encode()).hexdigest() if APP_PASSWORD else None
+_PUBLIC = {"/api/login", "/api/logout", "/api/health"}
+
+LOGIN_HTML = """<!doctype html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>DCR — Team Login</title><style>
+body{margin:0;font:15px/1.5 "Segoe UI",system-ui,sans-serif;background:#0f4c84;color:#1d2733;
+display:grid;place-items:center;height:100vh}
+.card{background:#fff;border-radius:14px;padding:30px 32px;width:320px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#1668b3,#0f4c84);color:#fff;
+font-weight:700;display:grid;place-items:center;margin-bottom:14px}
+h1{font-size:17px;margin:0 0 2px}p{color:#66758a;font-size:12.5px;margin:0 0 18px}
+label{display:block;font-size:12px;color:#66758a;margin:10px 0 4px}
+input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font:inherit}
+button{width:100%;margin-top:18px;background:#1668b3;color:#fff;border:0;padding:11px;border-radius:9px;
+font-size:15px;font-weight:600;cursor:pointer}button:hover{background:#0f4c84}
+.err{color:#d94d3a;font-size:12.5px;margin-top:10px;min-height:16px}</style></head>
+<body><form class=card onsubmit="return doLogin(event)">
+<div class=logo>DCR</div><h1>Feasibility &amp; Compliance System</h1><p>Team access — please sign in.</p>
+<label>Username</label><input id=u value="team" autocomplete=username>
+<label>Password</label><input id=p type=password autocomplete=current-password autofocus>
+<button type=submit>Sign in</button><div class=err id=e></div></form>
+<script>async function doLogin(ev){ev.preventDefault();const e=document.getElementById('e');e.textContent='';
+const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({username:document.getElementById('u').value,password:document.getElementById('p').value})});
+if(r.ok){location.href='/';}else{e.textContent='Invalid username or password.';}return false;}</script>
+</body></html>"""
 
 
 @app.middleware("http")
 async def team_gate(request: Request, call_next):
-    if APP_PASSWORD and request.url.path != "/api/health":
-        ok = False
-        hdr = request.headers.get("authorization", "")
-        if hdr.startswith("Basic "):
-            try:
-                user, pw = base64.b64decode(hdr[6:]).decode("utf-8").split(":", 1)
-                ok = secrets.compare_digest(user, APP_USER) and secrets.compare_digest(pw, APP_PASSWORD)
-            except Exception:
-                ok = False
-        if not ok:
-            from fastapi import Response as _R
-            return _R(status_code=401, headers={"WWW-Authenticate": 'Basic realm="DCR team access"'})
-    return await call_next(request)
+    if not APP_PASSWORD:
+        return await call_next(request)
+    path = request.url.path
+    if path in _PUBLIC or request.cookies.get("dcr_session") == SESSION_TOKEN:
+        return await call_next(request)
+    if path.startswith("/api/"):
+        return JSONResponse({"detail": "Authentication required"}, status_code=401)
+    return HTMLResponse(LOGIN_HTML, status_code=200)
+
+
+@app.post("/api/login")
+async def login(request: Request):
+    data = await request.json()
+    user = (data.get("username") or "").strip()
+    pw = data.get("password") or ""
+    if APP_PASSWORD and secrets.compare_digest(user, APP_USER) and secrets.compare_digest(pw, APP_PASSWORD):
+        resp = JSONResponse({"ok": True})
+        resp.set_cookie("dcr_session", SESSION_TOKEN, httponly=True, samesite="lax", max_age=7 * 24 * 3600)
+        return resp
+    return JSONResponse({"ok": False, "detail": "Invalid credentials"}, status_code=401)
+
+
+@app.post("/api/logout")
+async def logout():
+    resp = JSONResponse({"ok": True})
+    resp.delete_cookie("dcr_session")
+    return resp
 
 
 class PlotIn(BaseModel):
@@ -113,7 +155,7 @@ class SaveIn(BaseModel):
 @app.get("/api/health")
 def health():
     from engine.amendments import status as amend_status
-    return {"status": "ok", "version": APP_VERSION,
+    return {"status": "ok", "version": APP_VERSION, "auth": bool(APP_PASSWORD),
             "modules": ["feasibility", "scenarios", "compliance", "projects"],
             "rules_loaded": ["Rule 35 (NHR)", "Rule 39 (HR)", "Rule 41 (OSR)", "Rule 49 (Premium FSI)", "Annexure IV (parking)"],
             "amendments_reviewed_through": amend_status()["reviewed_through"]}

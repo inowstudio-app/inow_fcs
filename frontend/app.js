@@ -43,7 +43,23 @@ $("#uM").addEventListener("click", () => setUnit("m"));
 $("#uF").addEventListener("click", () => setUnit("ft"));
 
 // ===== health =====
-fetch("/api/health").then(r => r.json()).then(h => $("#ruleStatus").textContent = h.rules_loaded.join(" · ")).catch(() => {});
+fetch("/api/health").then(r => r.json()).then(h => {
+  $("#ruleStatus").textContent = h.rules_loaded.join(" · ");
+  if (h.auth) $("#logoutBtn").hidden = false;
+}).catch(() => {});
+
+// ===== logout / reset =====
+$("#logoutBtn").addEventListener("click", async () => {
+  await fetch("/api/logout", { method: "POST" });
+  location.reload();
+});
+$("#resetBtn").addEventListener("click", () => {
+  ["survey_no", "village", "area_sqm", "width_m", "depth_m", "abutting_road_width_m"].forEach(n => form[n].value = "");
+  form.polygon.value = ""; form.parking_area_class.value = "";
+  $("#fmbExtract").hidden = true; $("#fmbPreviewWrap").hidden = true;
+  $("#fmbStatus").textContent = "Optional — auto-extracts cadastral details & dimensions.";
+  document.querySelectorAll(".need").forEach(e => e.classList.remove("need"));
+});
 
 // ===== tabs =====
 document.querySelectorAll(".tab[data-view]").forEach(t => t.addEventListener("click", () => {
@@ -80,20 +96,32 @@ function plotBody() {
   return b;
 }
 
+form.abutting_road_width_m.addEventListener("input", (e) => { if (e.target.value) e.target.classList.remove("need"); });
+
+function validPlot(b) {
+  if (!(b.area_sqm > 0 && b.width_m > 0 && b.depth_m > 0 && b.abutting_road_width_m > 0)) {
+    alert("Please fill in plot Area, Frontage, Depth and Abutting road width.");
+    return false;
+  }
+  return true;
+}
+
 // ===== primary action =====
 $("#primaryBtn").addEventListener("click", () => {
   if (VIEW === "compliance") return runCompliance();
   return runFeasibility();
 });
 async function runFeasibility() {
-  const r = await fetch("/api/scenarios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(plotBody()) });
+  const body = plotBody(); if (!validPlot(body)) return;
+  const r = await fetch("/api/scenarios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!r.ok) return alert("Error: " + await r.text());
   LAST = await r.json(); LAST.inputs = plotBody();
   renderFeasibility();
 }
 async function runCompliance() {
+  const pb = plotBody(); if (!validPlot(pb)) return;
   const body = {
-    plot: plotBody(), height_m: toM(+$("#p_height").value, "len"), dwellings: +$("#p_dwellings").value,
+    plot: pb, height_m: toM(+$("#p_height").value, "len"), dwellings: +$("#p_dwellings").value,
     front_setback_m: toM(+$("#p_front").value, "len"), side_setback_m: toM(+$("#p_side").value, "len"),
     rear_setback_m: toM(+$("#p_rear").value, "len"), built_up_area_sqm: toM(+$("#p_bua").value, "area"),
     footprint_area_sqm: toM(+$("#p_fp").value, "area"), car_parking_provided: +$("#p_cars").value,
@@ -105,6 +133,9 @@ async function runCompliance() {
 }
 
 // ===== FMB upload =====
+const FMB_LABELS = { survey_no: "Survey No", village: "Village", area_sqm: "Area", width_m: "Frontage",
+  depth_m: "Depth", abutting_road_width: "Abutting road width", local_body: "Planning authority" };
+
 $("#fmbFile").addEventListener("change", async (e) => {
   const f = e.target.files[0]; if (!f) return;
   $("#fmbStatus").textContent = "Reading FMB…";
@@ -115,10 +146,24 @@ $("#fmbFile").addEventListener("change", async (e) => {
     const d = await r.json();
     $("#fmbPreview").src = "data:image/png;base64," + d.preview_png_b64;
     $("#fmbPreviewWrap").hidden = false;
-    if (d.parsed.survey_no) form.survey_no.value = d.parsed.survey_no;
-    if (d.parsed.village) form.village.value = d.parsed.village;
-    if (d.parsed.area_sqm) form.area_sqm.value = roundU(convertVal(d.parsed.area_sqm, "area", "m", U), "area");
-    $("#fmbStatus").textContent = d.parsed.has_text_layer ? "FMB read — confirm fields." : "Sketch shown — type the dimensions.";
+    const p = d.parsed, det = d.detected || {};
+    if (det.survey_no) form.survey_no.value = p.survey_no;
+    if (det.village) form.village.value = p.village;
+    if (det.area_sqm) form.area_sqm.value = roundU(convertVal(p.area_sqm, "area", "m", U), "area");
+    if (det.width_m) form.width_m.value = roundU(convertVal(p.width_m, "len", "m", U), "len");
+    if (det.depth_m) form.depth_m.value = roundU(convertVal(p.depth_m, "len", "m", U), "len");
+
+    const filled = Object.keys(det).filter(k => det[k]).map(k => FMB_LABELS[k] || k);
+    const miss = (d.missing || []).map(k => FMB_LABELS[k] || k);
+    const dimsTxt = (p.dimensions && p.dimensions.length)
+      ? `<div class="ex-dim">Detected edge lengths: ${p.dimensions.join(", ")} m — Frontage/Depth set to smallest/largest; adjust if needed.</div>` : "";
+    $("#fmbExtract").hidden = false;
+    $("#fmbExtract").innerHTML =
+      `<div class="ex-ok">✓ Auto-filled: ${filled.join(", ") || "none"}</div>` +
+      (miss.length ? `<div class="ex-miss">⚠ Not on the FMB — please enter: ${miss.join(", ")}</div>` : "") + dimsTxt;
+    // highlight the road-width field that always needs manual entry
+    const rw = form.abutting_road_width_m; rw.classList.toggle("need", !rw.value);
+    $("#fmbStatus").textContent = d.method === "ocr" ? "Read via OCR." : d.method === "text" ? "Read from PDF text." : "Could not read text — enter manually.";
   } catch (err) { $("#fmbStatus").textContent = "Could not read FMB: " + err.message; }
 });
 

@@ -17,6 +17,7 @@
       <div class="unitToggle" title="Switch display units">
         <button id="uM" class="uon">Meters</button><button id="uF">Feet / inch</button>
       </div>
+      <button id="logoutBtn" class="ghost no-print" style="margin-left:10px" hidden>Logout</button>
     </div>
     <nav>
       <button class="tab active" data-view="feasibility">Feasibility study</button>
@@ -29,28 +30,32 @@
   <main>
     <!-- LEFT: shared plot inputs -->
     <section class="panel inputs no-print" id="inputPanel">
-      <h2>Plot details</h2>
+      <h2 style="display:flex;justify-content:space-between;align-items:center">Plot details
+        <button id="resetBtn" class="mini" type="button">↺ Reset</button></h2>
       <div class="upload">
         <label class="file-btn">Upload FMB (PDF)
           <input type="file" id="fmbFile" accept="application/pdf" hidden /></label>
-        <span id="fmbStatus" class="hint">Optional — auto-fills cadastral details.</span>
+        <span id="fmbStatus" class="hint">Optional — auto-extracts cadastral details &amp; dimensions.</span>
       </div>
+      <div id="fmbExtract" class="extract" hidden></div>
       <form id="plotForm" onsubmit="return false">
         <div class="grid2">
-          <label>Survey No <input name="survey_no" value="77/1B2" /></label>
-          <label>Village <input name="village" value="Siruvanur(R)" /></label>
+          <label>Survey No <input name="survey_no" placeholder="e.g. 77/1B2" /></label>
+          <label>Village <input name="village" placeholder="village name" /></label>
         </div>
         <div class="grid3">
-          <label>Area <span class="u" data-ulabel="area"></span> <input name="area_sqm" data-u="area" type="number" step="0.01" value="218" /></label>
-          <label>Frontage <span class="u" data-ulabel="len"></span> <input name="width_m" data-u="len" type="number" step="0.01" value="12.2" /></label>
-          <label>Depth <span class="u" data-ulabel="len"></span> <input name="depth_m" data-u="len" type="number" step="0.01" value="17.8" /></label>
+          <label>Area <span class="u" data-ulabel="area"></span> <input name="area_sqm" data-u="area" type="number" step="0.01" placeholder="0" /></label>
+          <label>Frontage <span class="u" data-ulabel="len"></span> <input name="width_m" data-u="len" type="number" step="0.01" placeholder="0" /></label>
+          <label>Depth <span class="u" data-ulabel="len"></span> <input name="depth_m" data-u="len" type="number" step="0.01" placeholder="0" /></label>
         </div>
         <div class="grid2">
-          <label>Abutting road width <span class="u" data-ulabel="len"></span> <input name="abutting_road_width_m" data-u="len" type="number" step="0.1" value="7.5" /></label>
-          <label>Local body
+          <label>Abutting road width <span class="u" data-ulabel="len"></span> <input name="abutting_road_width_m" data-u="len" type="number" step="0.1" placeholder="0" /></label>
+          <label>Planning authority
             <select name="parking_area_class">
-              <option value="corporation_municipal">Corporation / Municipal</option>
-              <option value="panchayat">Panchayat</option>
+              <option value="">— select —</option>
+              <option value="cmda">CMDA (Chennai Metro Area)</option>
+              <option value="corporation_municipal">Corporation / Municipal (DTCP)</option>
+              <option value="panchayat">Town / Village Panchayat (DTCP)</option>
             </select>
           </label>
         </div>
@@ -154,7 +159,7 @@
               <div class="grid3">
                 <label>Dwellings <input id="sc_dwellings" type="number" value="4" /></label>
                 <label>Use <select id="sc_use"><option value="residential">Residential</option><option value="commercial">Commercial</option></select></label>
-                <label>Local body <select id="sc_class"><option value="corporation_municipal">Corp/Municipal</option><option value="panchayat">Panchayat</option></select></label>
+                <label>Authority <select id="sc_class"><option value="cmda">CMDA</option><option value="corporation_municipal">Corp/Municipal</option><option value="panchayat">Panchayat</option></select></label>
               </div>
               <button id="dxfScrutiny" class="run">Run pre-DCR scrutiny →</button>
               <button id="dxfUse" class="ghost" style="margin-top:8px;width:100%">Use plot for Feasibility →</button>

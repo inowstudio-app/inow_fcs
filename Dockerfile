@@ -3,7 +3,10 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Python deps first (cached layer). Wheels for PyMuPDF/Shapely/ezdxf/reportlab are self-contained.
+# System libs: libgomp1 is needed by onnxruntime (RapidOCR for FMB extraction).
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+
+# Python deps first (cached layer). Wheels for PyMuPDF/Shapely/ezdxf/reportlab/onnxruntime are self-contained.
 COPY backend/requirements.txt backend/requirements.txt
 RUN pip install --no-cache-dir -r backend/requirements.txt
 
