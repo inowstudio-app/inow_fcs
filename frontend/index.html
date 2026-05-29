@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DCR Feasibility System — Tamil Nadu</title>
-  <link rel="stylesheet" href="style.css?v=17" />
+  <link rel="stylesheet" href="style.css?v=18" />
 </head>
 <body>
   <header class="no-print">
@@ -214,6 +214,11 @@
         <div id="asstNotice" class="ex-miss" hidden></div>
         <div class="asst-grid">
           <div class="asst-left">
+            <div class="chat-bar">
+              <button id="newChat" class="mini" type="button">＋ New chat</button>
+              <select id="savedChats"><option value="">Saved chats…</option></select>
+              <span id="chatSaved" class="hint"></span>
+            </div>
             <div id="asstThread" class="thread"></div>
             <div class="ask-row">
               <label class="file-btn" title="Attach a hand sketch / reference">🖼 Sketch<input type="file" id="asstImg" accept="image/*" hidden /></label>
@@ -237,6 +242,6 @@
       </div>
     </section>
   </main>
-  <script src="app.js?v=17"></script>
+  <script src="app.js?v=18"></script>
 </body>
 </html>

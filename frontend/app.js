@@ -85,7 +85,53 @@ function showView() {
 function fullWidthView() { return ["projects", "dxf", "assistant"].includes(VIEW); }
 
 // ===== DCR Assistant =====
-let ASST_IMG = null;
+let ASST_IMG = null, ASST_IMG_DATA = null;
+let CONVO = newConvo();
+function newConvo() { return { id: "c" + Date.now() + Math.random().toString(36).slice(2, 6), title: "", ts: Date.now(), messages: [] }; }
+function loadChats() { try { return JSON.parse(localStorage.getItem("dcr_chats") || "[]"); } catch (e) { return []; } }
+function saveChats(arr) {
+  try { localStorage.setItem("dcr_chats", JSON.stringify(arr)); }
+  catch (e) {  // quota exceeded -> drop stored images and retry
+    const slim = arr.map(c => ({ ...c, messages: c.messages.map(m => ({ ...m, img: m.img ? null : undefined })) }));
+    try { localStorage.setItem("dcr_chats", JSON.stringify(slim)); } catch (_) {}
+  }
+}
+function convoPush(m) {
+  CONVO.messages.push(m);
+  if (!CONVO.title && m.role === "you") CONVO.title = (m.text || "sketch").slice(0, 40);
+  CONVO.ts = Date.now();
+  const all = loadChats().filter(c => c.id !== CONVO.id);
+  all.unshift(CONVO);
+  saveChats(all.slice(0, 25));
+  refreshSavedList();
+  $("#chatSaved").textContent = "saved ✓";
+}
+function refreshSavedList() {
+  const sel = $("#savedChats"), cur = sel.value;
+  const chats = loadChats();
+  sel.innerHTML = `<option value="">Saved chats (${chats.length})…</option>` +
+    chats.map(c => `<option value="${c.id}">${(c.title || "untitled").replace(/</g, "&lt;")} · ${new Date(c.ts).toLocaleDateString("en-GB")}</option>`).join("");
+  sel.value = cur;
+}
+function loadConvo(id) {
+  const c = loadChats().find(x => x.id === id); if (!c) return;
+  CONVO = c;
+  $("#asstThread").innerHTML = "";
+  $("#asstCanvas").innerHTML = `<p class="placeholder">Diagrams and sketches appear here.</p>`;
+  c.messages.forEach(m => {
+    if (m.role === "you") { addBubble("you", m.text + (m.img ? "  [+ sketch]" : "")); if (m.img) showCanvas(`<img src="${m.img}" alt="sketch">`, "Your sketch"); }
+    else renderAnswer(m.text, m.usage);
+  });
+  $("#chatSaved").textContent = "loaded";
+}
+$("#newChat").addEventListener("click", () => {
+  CONVO = newConvo();
+  $("#asstThread").innerHTML = "";
+  $("#asstCanvas").innerHTML = `<p class="placeholder">Diagrams the assistant draws, and sketches you attach, appear here — large.</p>`;
+  $("#savedChats").value = ""; $("#chatSaved").textContent = "";
+});
+$("#savedChats").addEventListener("change", (e) => { if (e.target.value) loadConvo(e.target.value); });
+refreshSavedList();
 async function checkAssistant() {
   try {
     const s = await (await fetch("/api/assistant/status")).json();
@@ -96,13 +142,16 @@ async function checkAssistant() {
 }
 $("#asstImg").addEventListener("change", (e) => {
   ASST_IMG = e.target.files[0] || null;
+  ASST_IMG_DATA = null;
   $("#asstImgName").textContent = ASST_IMG ? "Attached: " + ASST_IMG.name : "";
+  if (ASST_IMG) { const fr = new FileReader(); fr.onload = () => { ASST_IMG_DATA = fr.result; }; fr.readAsDataURL(ASST_IMG); }
 });
 $("#asstSend").addEventListener("click", async () => {
   const q = $("#asstQ").value.trim();
   if (!q && !ASST_IMG) return;
   addBubble("you", q + (ASST_IMG ? "  [+ sketch]" : ""));
-  if (ASST_IMG) showCanvas(`<img src="${URL.createObjectURL(ASST_IMG)}" alt="sketch">`, "Your sketch");
+  if (ASST_IMG_DATA) showCanvas(`<img src="${ASST_IMG_DATA}" alt="sketch">`, "Your sketch");
+  convoPush({ role: "you", text: q, img: ASST_IMG_DATA || null });
   $("#asstQ").value = "";
   const thinking = addBubble("dcr", "…thinking…");
   const fd = new FormData();
@@ -111,10 +160,12 @@ $("#asstSend").addEventListener("click", async () => {
   try {
     const r = await fetch("/api/assistant", { method: "POST", body: fd });
     const d = await r.json().catch(() => ({}));
+    const ans = d.answer || d.detail || ("Error " + r.status + " — no response from server.");
     thinking.remove();
-    renderAnswer(d.answer || d.detail || ("Error " + r.status + " — no response from server."), d.usage);
+    renderAnswer(ans, d.usage);
+    convoPush({ role: "dcr", text: ans, usage: d.usage });
   } catch (err) { thinking.remove(); addBubble("dcr", "Error: " + err.message); }
-  ASST_IMG = null; $("#asstImg").value = ""; $("#asstImgName").textContent = "";
+  ASST_IMG = null; ASST_IMG_DATA = null; $("#asstImg").value = ""; $("#asstImgName").textContent = "";
 });
 function addBubble(who, text) {
   const div = document.createElement("div");
