@@ -531,9 +531,9 @@ document.querySelectorAll("[data-save]").forEach(btn => btn.addEventListener("cl
   if (!src) return alert("Run an analysis first.");
   const client = prompt("Client name?") || "";
   const i = src.inputs;
-  const body = { client, title: `${i.survey_no || "plot"} — ${btn.dataset.save}`, kind: btn.dataset.save, inputs: i, result: src };
-  const r = await fetch("/api/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  if (r.ok) { const d = await r.json(); alert("Saved as project #" + d.id); }
+  const body = { client, title: `${i.survey_no || "plot"} — ${btn.dataset.save}`, kind: btn.dataset.save, inputs: i, result: src, survey_no: i.survey_no || "", village: i.village || "" };
+  const d = lsAddProject(body);
+  alert("Saved as project #" + d.id + " (stored in this browser — survives refresh & logout).");
 }));
 
 // ===== render feasibility =====
@@ -614,9 +614,21 @@ function renderCompliance() {
       <td><b>${c.status.replace("_", " ")}</b></td></tr>`).join("");
 }
 
-// ===== projects =====
+// ===== projects (browser localStorage — survives refresh / logout / redeploy) =====
+function lsLoadProjects() { try { return JSON.parse(localStorage.getItem("dcr_projects") || "[]"); } catch (e) { return []; } }
+function lsSaveProjects(arr) { try { localStorage.setItem("dcr_projects", JSON.stringify(arr)); return true; } catch (e) { return false; } }
+function lsAddProject(p) {
+  const all = lsLoadProjects();
+  p.id = Date.now();
+  p.created_at = new Date().toISOString().slice(0, 19);
+  all.unshift(p);
+  // if over quota, drop oldest until it fits
+  while (all.length > 1 && !lsSaveProjects(all)) all.pop();
+  lsSaveProjects(all);
+  return p;
+}
 async function loadProjects() {
-  const rows = await (await fetch("/api/projects")).json();
+  const rows = lsLoadProjects();
   $("#projectsTable").innerHTML = `<tr><th>#</th><th>Client</th><th>Title</th><th>Survey</th><th>Kind</th><th>Date</th><th></th></tr>` +
     (rows.length ? rows.map(r => `<tr><td>${r.id}</td><td>${r.client || "—"}</td><td>${r.title}</td><td>${r.survey_no || "—"}</td>
       <td>${r.kind}</td><td>${(r.created_at || "").slice(0, 10)}</td>
@@ -624,7 +636,8 @@ async function loadProjects() {
       : `<tr><td colspan="7" class="hint" style="padding:14px">No saved projects yet. Run a study and click ★ Save.</td></tr>`);
 }
 async function openProject(id) {
-  const p = await (await fetch("/api/projects/" + id)).json();
+  const p = lsLoadProjects().find(x => x.id === id);
+  if (!p) return alert("Project not found in this browser.");
   const i = p.inputs;
   if (i.area_sqm != null) { form.area_sqm.value = roundU(convertVal(i.area_sqm, "area", "m", U), "area"); AREA_MANUAL = true; }
   if (i.width_m) { setLen("side_n", i.width_m); setLen("side_s", i.width_m); }
@@ -639,7 +652,7 @@ async function openProject(id) {
   if (p.kind === "feasibility") { LAST = p.result; LAST.inputs = i; document.querySelector('.tab[data-view="feasibility"]').click(); renderFeasibility(); }
   else { LASTC = p.result; LASTC.inputs = i; document.querySelector('.tab[data-view="compliance"]').click(); renderCompliance(); }
 }
-async function delProject(id) { if (confirm("Delete project #" + id + "?")) { await fetch("/api/projects/" + id, { method: "DELETE" }); loadProjects(); } }
+async function delProject(id) { if (confirm("Delete project #" + id + "?")) { lsSaveProjects(lsLoadProjects().filter(x => x.id !== id)); loadProjects(); } }
 
 // ===== helpers =====
 function fmt(n) { return Number(n).toLocaleString("en-IN"); }
