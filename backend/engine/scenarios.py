@@ -10,6 +10,7 @@ from dataclasses import replace
 from .feasibility import Plot, compute_envelope
 from .parking import estimate_parking
 from . import amendments
+from .jurisdiction import jurisdiction
 
 AVG_UNIT_SQM = 70.0  # assumption for estimating dwelling yield; surfaced in output
 
@@ -68,6 +69,9 @@ def run_scenarios(plot: Plot) -> dict:
     if plot.plot_type == "gated":
         site_notes.append("Gated / approved-layout plot: roads & OSR are handled at the layout level; "
                           "individual-plot setbacks per Rule 35 still apply unless the sanctioned layout specifies otherwise.")
+    juris = jurisdiction(plot.district)
+    if juris:
+        site_notes = juris["notes"] + site_notes
     return {
         "plot": {"area_sqm": plot.area_sqm, "width_m": plot.width_m, "depth_m": plot.depth_m,
                  "abutting_road_width_m": plot.abutting_road_width_m, "survey_no": plot.survey_no},
@@ -75,6 +79,7 @@ def run_scenarios(plot: Plot) -> dict:
         "recommended": recommended,
         "assumptions": {"avg_dwelling_unit_sqm": AVG_UNIT_SQM},
         "site_notes": site_notes,
+        "jurisdiction": juris,
         "amendments": amendments.status(),
         "pending": ["Use-zone schedules", "Rule 47 layout/sub-division",
                     "Older scanned amendments pending OCR: " + (", ".join(amendments.status()["pending_review"]) or "none")],

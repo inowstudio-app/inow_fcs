@@ -167,6 +167,9 @@ const SIDE_NAMES = { N: "North", E: "East", S: "South", W: "West" };
   });
   $("#roadw_" + d).addEventListener("input", updateFrontNote);
 });
+form.district.addEventListener("change", () => {
+  if (form.district.value === "Chennai" && !form.parking_area_class.value) form.parking_area_class.value = "cmda";
+});
 ["side_n", "side_e", "side_s", "side_w"].forEach(n => form[n].addEventListener("input", recalcArea));
 form.area_sqm.addEventListener("input", () => { AREA_MANUAL = form.area_sqm.value !== ""; });
 
