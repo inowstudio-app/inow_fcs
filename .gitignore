@@ -1,0 +1,18 @@
+# Source regulation PDFs (large; not needed at runtime — rules are in data/rules/*.json)
+*.pdf
+# Working text extracts & samples (derived, not needed at runtime)
+data/text/
+data/samples/
+# Local database (created at runtime / persisted on the host disk)
+data/projects.db
+*.db
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+# Editor / OS
+.DS_Store
+Thumbs.db
+# Local-only Claude tooling config
+.claude/

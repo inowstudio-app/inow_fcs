@@ -1,0 +1,18 @@
+# Render Blueprint — one-click deploy. In Render: New + → Blueprint → connect this repo.
+services:
+  - type: web
+    name: dcr-app
+    runtime: docker
+    plan: starter            # 'starter' ($7/mo) is needed for a persistent disk; 'free' works but the DB resets on redeploy
+    healthCheckPath: /api/health
+    disk:
+      name: dcr-data         # persistent storage so saved projects survive redeploys
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DB_PATH
+        value: /var/data/projects.db
+      - key: APP_USER
+        value: team
+      - key: APP_PASSWORD    # set this in the Render dashboard (Environment tab) — do NOT commit it
+        sync: false

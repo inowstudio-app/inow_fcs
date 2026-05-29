@@ -1,0 +1,13 @@
+*.pdf
+data/text/
+data/samples/
+data/projects.db
+*.db
+__pycache__/
+*.pyc
+.venv/
+venv/
+.git/
+.claude/
+tools/
+README.md

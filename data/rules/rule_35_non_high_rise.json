@@ -1,0 +1,65 @@
+{
+  "rule_id": "35",
+  "title": "Planning Parameters for Non High Rise Buildings",
+  "source": { "document": "TNCDBR-2019", "part": "VI", "gazette_pages": "32-37" },
+  "applies_to": { "building_class": "non_high_rise", "max_height_m": 18.30 },
+  "units": "metres",
+  "categories": [
+    {
+      "id": "35.1.a",
+      "label": "Up to 16 dwellings or up to 300 sqm commercial; small developments",
+      "condition": { "dwellings_max": 16, "commercial_sqm_max": 300, "height_max_m": 14.0 },
+      "fsi_max": 2.0,
+      "max_height_default": "GF+2F or Stilt+3F, max 14m (amended by GO 69/2024; was 12m)",
+      "max_height_ews": "GF+1F or Stilt+2F, max 10m (amended by GO 69/2024; was 9m)",
+      "min_road_width_m": { "continuous_building_area": 1.5, "ews": 1.5, "other_areas_min": 3.0 },
+      "front_setback_by_road_width_m": [
+        { "road_upto_m": 9.0, "fsb_m": 1.5 },
+        { "road_upto_m": 18.0, "fsb_m": 3.0 },
+        { "road_upto_m": 30.5, "fsb_m": 4.5 },
+        { "road_upto_m": null, "fsb_m": 6.0 }
+      ],
+      "side_setback_m": {
+        "cba": 0,
+        "by_height_and_plot_width": [
+          { "height_upto_m": 7.0, "bands": [ { "plot_width_upto_m": 9.0, "ssb_m": 1.0, "sides": "one" }, { "plot_width_upto_m": null, "ssb_m": 1.0, "sides": "either" } ] },
+          { "height_upto_m": 14.0, "bands": [ { "plot_width_upto_m": 6.0, "ssb_m": 1.0, "sides": "one" }, { "plot_width_upto_m": 9.0, "ssb_m": 1.5, "sides": "one" }, { "plot_width_upto_m": null, "ssb_m": 1.5, "sides": "either" } ] }
+        ]
+      },
+      "rear_setback_by_height_m": [
+        { "height_upto_m": 7.0, "rsb_m": 0 },
+        { "height_upto_m": 14.0, "rsb_m": 1.5 }
+      ]
+    },
+    {
+      "id": "35.1.b",
+      "label": "Exceeding 16 dwellings or exceeding 300 sqm commercial; height up to 18.30m",
+      "condition": { "dwellings_min": 17, "height_max_m": 18.30 },
+      "fsi_max": 2.0,
+      "min_road_width_m": 9.0,
+      "front_setback_by_road_width_m": [
+        { "road_upto_m": 18.0, "road_min_m": 9.0, "fsb_m": 3.0 },
+        { "road_upto_m": 30.5, "fsb_m": 4.5 },
+        { "road_upto_m": null, "fsb_m": 6.0 }
+      ],
+      "side_and_rear_setback_by_height_m": [
+        { "height_upto_m": 7.0, "setback_m": 1.0 },
+        { "height_upto_m": 14.0, "setback_m": 1.5 },
+        { "height_upto_m": 16.0, "setback_m": 2.5 },
+        { "height_upto_m": 18.30, "setback_m": 3.0 }
+      ]
+    }
+  ],
+  "key_provisos": {
+    "multiple_road_frontage": "FSB from the wider road; remaining sides take side/rear setback (Expl.2(iv)); in CBA min 1m.",
+    "max_height_ceiling": "18.30m, but ornamental/non-habitable structures (water tank, mast, gopuram) up to 30.5m (Expl.2(iii)).",
+    "public_buildings": "Kalyana mandapam, assembly/exhibition halls, hospitals, hotels, theatres, malls: setback all around >= 6m (Expl.2(vii)).",
+    "parking": "Per Annexure IV (sub-clause 4).",
+    "rainwater_harvesting": "Per Annexure XXII (sub-clause 5).",
+    "stilt_parking": "If enclosed, counts toward FSI (sub-clause 10).",
+    "basement": "<=1.2m above GL, headroom >=2.4m, not in required setbacks needed for fire movement (sub-clause 20).",
+    "internal_vehicular_access": "Clear 7.2m width, open to sky, within 50m of every block (sub-clause 9)."
+  },
+  "needs_cross_reference": ["28 (structures in setbacks)", "42 (corridor width)", "43 (accessibility)", "Annexure IV (parking)", "Annexure XXII (RWH)"],
+  "amendment_check_pending": true
+}

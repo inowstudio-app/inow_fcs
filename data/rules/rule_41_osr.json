@@ -1,0 +1,20 @@
+{
+  "rule_id": "41",
+  "title": "Reservation of land for community recreational purposes (OSR)",
+  "source": { "document": "TNCDBR-2019", "part": "VI", "gazette_pages": "46-47" },
+  "units": "metres",
+  "bands": [
+    { "site_area_upto_sqm": 3000, "osr": "nil" },
+    { "site_area_upto_sqm": 10000, "osr_pct": 10, "basis": "area excluding roads",
+      "min_parcel_sqm": 100, "min_width_m": 10, "max_parcels": 2,
+      "payment_in_lieu_allowed": true, "note": "first 3000 sqm excluded from charge" },
+    { "site_area_upto_sqm": null, "osr_pct": 10, "basis": "area excluding roads",
+      "min_parcel_sqm": 500, "min_width_m": 10,
+      "payment_in_lieu_allowed": false, "note": "mandatory handover by gift deed" }
+  ],
+  "notes": [
+    "OSR is exclusive of setbacks and block spacing; must be free of construction (41(2)).",
+    "Institutional & Industrial developments need not gift OSR (Explanation i).",
+    "Plot extent counts the OSR area even on ownership change (Explanation ii)."
+  ]
+}

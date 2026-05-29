@@ -1,0 +1,26 @@
+{
+  "rule_id": "39",
+  "title": "Special rules for High Rise Buildings",
+  "source": { "document": "TNCDBR-2019", "part": "VI", "gazette_pages": "40-42" },
+  "applies_to": { "building_class": "high_rise", "min_height_m": 18.30 },
+  "units": "metres",
+  "min_road_width_m": 18.0,
+  "fsi_by_road_width_m": [
+    { "road_min_m": 12.0, "fsi": 2.0, "note": "limited-FSI option" },
+    { "road_min_m": 15.0, "fsi": 2.5 },
+    { "road_min_m": 18.0, "fsi": 3.25 }
+  ],
+  "max_coverage_pct": 50,
+  "setback_all_around_m": {
+    "height_upto_30m": 7.0,
+    "above_30m_rule": "for every 6m (or part) of height above 30m, add 1m, subject to max 20m"
+  },
+  "block_spacing_same_as_setback": true,
+  "qualifying_road_length_m": { "cma_and_corporations": 500, "other_areas": 250 },
+  "notes": [
+    "Site must abut (or gain access via exclusive passage from) an 18m road; 12m/15m allowed with FSI limits.",
+    "CMA high-rise zones per Annexure XIX; elsewhere allowed unless prohibited by Master Plan/DDP.",
+    "Parking per Annexure IV (rule 39(8))."
+  ],
+  "amendment_check_pending": true
+}

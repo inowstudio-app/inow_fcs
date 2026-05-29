@@ -1,0 +1,8 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pymupdf>=1.27
+python-multipart>=0.0.9
+pydantic>=2.7
+shapely>=2.0
+ezdxf>=1.4
+reportlab>=4.0

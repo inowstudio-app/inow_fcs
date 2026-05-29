@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DCR Feasibility System — Tamil Nadu</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="no-print">
+    <div class="brand">
+      <div class="logo">DCR</div>
+      <div>
+        <h1>Feasibility &amp; Compliance System</h1>
+        <p class="sub">Tamil Nadu Combined Development &amp; Building Rules, 2019 · <span id="ruleStatus">loading…</span></p>
+      </div>
+      <div class="unitToggle" title="Switch display units">
+        <button id="uM" class="uon">Meters</button><button id="uF">Feet / inch</button>
+      </div>
+    </div>
+    <nav>
+      <button class="tab active" data-view="feasibility">Feasibility study</button>
+      <button class="tab" data-view="compliance">Compliance check</button>
+      <button class="tab" data-view="dxf">Drawing import</button>
+      <button class="tab" data-view="projects">Projects</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- LEFT: shared plot inputs -->
+    <section class="panel inputs no-print" id="inputPanel">
+      <h2>Plot details</h2>
+      <div class="upload">
+        <label class="file-btn">Upload FMB (PDF)
+          <input type="file" id="fmbFile" accept="application/pdf" hidden /></label>
+        <span id="fmbStatus" class="hint">Optional — auto-fills cadastral details.</span>
+      </div>
+      <form id="plotForm" onsubmit="return false">
+        <div class="grid2">
+          <label>Survey No <input name="survey_no" value="77/1B2" /></label>
+          <label>Village <input name="village" value="Siruvanur(R)" /></label>
+        </div>
+        <div class="grid3">
+          <label>Area <span class="u" data-ulabel="area"></span> <input name="area_sqm" data-u="area" type="number" step="0.01" value="218" /></label>
+          <label>Frontage <span class="u" data-ulabel="len"></span> <input name="width_m" data-u="len" type="number" step="0.01" value="12.2" /></label>
+          <label>Depth <span class="u" data-ulabel="len"></span> <input name="depth_m" data-u="len" type="number" step="0.01" value="17.8" /></label>
+        </div>
+        <div class="grid2">
+          <label>Abutting road width <span class="u" data-ulabel="len"></span> <input name="abutting_road_width_m" data-u="len" type="number" step="0.1" value="7.5" /></label>
+          <label>Local body
+            <select name="parking_area_class">
+              <option value="corporation_municipal">Corporation / Municipal</option>
+              <option value="panchayat">Panchayat</option>
+            </select>
+          </label>
+        </div>
+        <details class="adv">
+          <summary>Exact plot shape (optional)</summary>
+          <label class="hint">Corner points x,y in metres — one per line (front edge = first two points). Auto-filled by Drawing import.
+            <textarea name="polygon" rows="4" placeholder="0,0&#10;12.2,0&#10;11.5,17.6&#10;0.3,18.0"></textarea>
+          </label>
+        </details>
+      </form>
+
+      <div id="proposalInputs" hidden>
+        <h2>Proposed design</h2>
+        <div class="grid2">
+          <label>Height <span class="u" data-ulabel="len"></span> <input id="p_height" data-u="len" type="number" step="0.1" value="9" /></label>
+          <label>Dwellings <input id="p_dwellings" type="number" value="1" /></label>
+        </div>
+        <div class="grid3">
+          <label>Front SB <span class="u" data-ulabel="len"></span> <input id="p_front" data-u="len" type="number" step="0.1" value="1.0" /></label>
+          <label>Side SB <span class="u" data-ulabel="len"></span> <input id="p_side" data-u="len" type="number" step="0.1" value="1.5" /></label>
+          <label>Rear SB <span class="u" data-ulabel="len"></span> <input id="p_rear" data-u="len" type="number" step="0.1" value="1.5" /></label>
+        </div>
+        <div class="grid3">
+          <label>Built-up <span class="u" data-ulabel="area"></span> <input id="p_bua" data-u="area" type="number" step="0.1" value="500" /></label>
+          <label>Footprint <span class="u" data-ulabel="area"></span> <input id="p_fp" data-u="area" type="number" step="0.1" value="120" /></label>
+          <label>Car parks <input id="p_cars" type="number" value="1" /></label>
+        </div>
+      </div>
+
+      <button id="primaryBtn" class="run">Analyse this plot →</button>
+      <div id="fmbPreviewWrap" class="fmb-preview" hidden><h3>FMB sketch</h3><img id="fmbPreview" /></div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="panel results">
+      <div id="placeholder" class="placeholder no-print"><p>Enter plot details and run an analysis.</p></div>
+
+      <!-- FEASIBILITY VIEW -->
+      <div id="view-feasibility" class="view" hidden>
+        <div class="report-head">
+          <div><h2 class="rh-title">Feasibility Study</h2><p class="rh-meta" id="rhMeta"></p></div>
+          <div class="no-print"><button class="ghost" data-save="feasibility">★ Save</button>
+            <button class="ghost" onclick="downloadPdf('feasibility')">⤓ PDF</button>
+            <button id="printBtn" class="ghost">🖨 Print</button></div>
+        </div>
+        <h3>Highest &amp; best use <span class="hint">— ranked permissible options</span></h3>
+        <div id="scenarioCards" class="scenarios"></div>
+        <div id="detail">
+          <h3 id="detailTitle">Selected option</h3>
+          <div class="kpis" id="kpis"></div>
+          <div class="detail-grid">
+            <div class="overlay-wrap">
+              <svg id="overlay" viewBox="0 0 420 460" preserveAspectRatio="xMidYMid meet"></svg>
+              <div class="legend"><span><i class="sw plot"></i> Plot</span><span><i class="sw setback"></i> Setback</span><span><i class="sw build"></i> Buildable</span></div>
+            </div>
+            <div class="detail-side">
+              <div class="block" id="upsideBlock"></div>
+              <div class="block" id="parkingBlock"></div>
+              <div id="flags"></div>
+              <p class="cite">Source: <span id="citation"></span></p>
+            </div>
+          </div>
+        </div>
+        <div class="block amend" id="amendBlock"></div>
+        <details class="pending"><summary>Not yet included</summary><ul id="pendingList"></ul></details>
+        <p class="disclaimer">Indicative per TNCDBR-2019. Verify with the sanctioning authority before design freeze.</p>
+      </div>
+
+      <!-- COMPLIANCE VIEW -->
+      <div id="view-compliance" class="view" hidden>
+        <div class="report-head">
+          <div><h2 class="rh-title">Compliance Check</h2><p class="rh-meta" id="cMeta"></p></div>
+          <div class="no-print"><button class="ghost" data-save="compliance">★ Save</button>
+            <button class="ghost" onclick="downloadPdf('compliance')">⤓ PDF</button>
+            <button class="ghost" onclick="window.print()">🖨 Print</button></div>
+        </div>
+        <div id="verdict"></div>
+        <table class="checks" id="checksTable"></table>
+        <p class="disclaimer">Indicative per TNCDBR-2019.</p>
+      </div>
+
+      <!-- DXF IMPORT VIEW -->
+      <div id="view-dxf" class="view" hidden>
+        <h2 class="rh-title">Drawing import (DXF)</h2>
+        <p class="hint">Upload a CAD drawing (.dxf). Export DWG → DXF from AutoCAD first. We detect closed polylines; you confirm which is the plot boundary (and optionally the building footprint).</p>
+        <label class="file-btn">Upload DXF<input type="file" id="dxfFile" accept=".dxf" hidden /></label>
+        <span id="dxfStatus" class="hint"></span>
+        <div id="dxfResult" hidden>
+          <div class="detail-grid">
+            <div class="overlay-wrap"><svg id="dxfOverlay" viewBox="0 0 420 420" preserveAspectRatio="xMidYMid meet"></svg>
+              <div class="legend"><span><i class="sw build" style="background:rgba(31,157,92,.12);border-color:#1f9d5c"></i> Plot</span><span><i class="sw" style="background:rgba(22,104,179,.12);border:1px solid #1668b3"></i> Building</span></div>
+            </div>
+            <div>
+              <table class="checks" id="dxfTable"></table>
+              <h4 style="margin-top:14px">Proposed-design inputs (for scrutiny)</h4>
+              <div class="grid3">
+                <label>Road width <span class="u" data-ulabel="len"></span> <input id="sc_road" data-u="len" type="number" step="0.1" value="12" /></label>
+                <label>Height <span class="u" data-ulabel="len"></span> <input id="sc_height" data-u="len" type="number" step="0.1" value="11" /></label>
+                <label>Floors <input id="sc_floors" type="number" value="3" /></label>
+              </div>
+              <div class="grid3">
+                <label>Dwellings <input id="sc_dwellings" type="number" value="4" /></label>
+                <label>Use <select id="sc_use"><option value="residential">Residential</option><option value="commercial">Commercial</option></select></label>
+                <label>Local body <select id="sc_class"><option value="corporation_municipal">Corp/Municipal</option><option value="panchayat">Panchayat</option></select></label>
+              </div>
+              <button id="dxfScrutiny" class="run">Run pre-DCR scrutiny →</button>
+              <button id="dxfUse" class="ghost" style="margin-top:8px;width:100%">Use plot for Feasibility →</button>
+            </div>
+          </div>
+
+          <div id="scrutinyReport" hidden>
+            <div class="report-head">
+              <div><h2 class="rh-title">Pre-DCR Scrutiny Report</h2><p class="rh-meta" id="scMeta"></p></div>
+              <div class="no-print"><button class="ghost" onclick="downloadPdf('scrutiny')">⤓ PDF</button>
+                <button class="ghost" onclick="window.print()">🖨 Print</button></div>
+            </div>
+            <div id="scVerdict"></div>
+            <div class="kpis" id="scAuto"></div>
+            <table class="checks" id="scTable"></table>
+            <div id="scWarn"></div>
+            <p class="disclaimer">Auto-derived from the imported drawing per TNCDBR-2019. Indicative pre-scrutiny — verify before submission.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS VIEW -->
+      <div id="view-projects" class="view" hidden>
+        <h2 class="rh-title">Saved projects</h2>
+        <table class="checks" id="projectsTable"></table>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

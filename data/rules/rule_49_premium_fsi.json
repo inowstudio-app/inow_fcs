@@ -1,0 +1,15 @@
+{
+  "rule_id": "49",
+  "title": "Premium FSI",
+  "source": { "document": "TNCDBR-2019", "part": "VI", "gazette_pages": "60" },
+  "premium_by_road_width_m": [
+    { "road_min_m": 18.0, "premium_pct": 50 },
+    { "road_min_m": 12.0, "premium_pct": 40 },
+    { "road_min_m": 9.0, "premium_pct": 30 }
+  ],
+  "charge_basis": {
+    "non_high_rise": "50% of Guideline value of the excess FSI area",
+    "high_rise": "40% of Guideline value of the excess FSI area"
+  },
+  "note": "Premium FSI is over and above normally permissible FSI; not available below 9m road."
+}

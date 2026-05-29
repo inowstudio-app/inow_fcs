@@ -1,0 +1,16 @@
+{
+  "rule_id": "29",
+  "title": "Spaces excluded from FSI and Coverage Computation",
+  "source": { "document": "TNCDBR-2019", "part": "VI", "gazette_pages": "39" },
+  "excluded_items": [
+    "Terrace stair/lift rooms & passages, architectural features, elevated tanks, WC <=10 sqm",
+    "Stair/lift rooms & passages in stilt parking floor or upper floors used for parking",
+    "Stair/lift rooms & passages in basement floor(s) used for parking",
+    "Basement floor(s) used for parking",
+    "Stilt parking floor if open on sides and used for parking",
+    "Servant/driver bath & WC per block (GF or stilt) for NHR & HR buildings",
+    "Watchman booth",
+    "Caretaker booth/room in ground or stilt parking floor"
+  ],
+  "engine_note": "Applied as an informational uplift: built-up usable area can exceed counted-FSI area because these are excluded. Not auto-quantified yet (depends on design)."
+}

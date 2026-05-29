@@ -1,0 +1,26 @@
+{
+  "annexure": "IV",
+  "title": "Parking Requirements",
+  "source": { "document": "TNCDBR-2019", "ref": "See rule 38(4) and 39(8)", "gazette_pages": "86-88" },
+  "visitor_parking_pct": 10,
+  "visitor_applies_when": "dwelling units exceed 6 (residential)",
+  "residential": {
+    "corporation_municipal": [
+      { "floor_area_upto_sqm": 25, "rule": "nil" },
+      { "floor_area_upto_sqm": 50, "two_wheeler": 1 },
+      { "floor_area_upto_sqm": 75, "car_per_n_dwellings": 2, "two_wheeler_per_dwelling": 1 },
+      { "floor_area_upto_sqm": 100, "car_per_n_dwellings": 2, "two_wheeler_per_dwelling": 1 },
+      { "floor_area_upto_sqm": null, "car_per_floor_area_sqm": 100 }
+    ],
+    "panchayat": [
+      { "floor_area_upto_sqm": 50, "rule": "nil" },
+      { "floor_area_upto_sqm": 75, "car_per_n_dwellings": 2, "two_wheeler_per_dwelling": 1 },
+      { "floor_area_upto_sqm": null, "car_per_floor_area_sqm": 75 }
+    ]
+  },
+  "shops_commercial": {
+    "corporation_municipal": { "exempt_first_sqm": 50, "car_and_tw_per_sqm": 50 },
+    "panchayat": { "exempt_first_sqm": 75, "car_and_tw_per_sqm": 75 }
+  },
+  "offices": { "car_per_floor_area_sqm": 100, "two_wheeler_per_floor_area_sqm": 25, "visitor_pct": 10 }
+}
