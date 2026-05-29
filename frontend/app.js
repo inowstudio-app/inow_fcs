@@ -308,18 +308,23 @@ function plotBody() {
 }
 function setLen(name, metres) { form[name].value = roundU(convertVal(metres, "len", "m", U), "len"); }
 
-// Reconstruct a quadrilateral (metres) from the 4 side lengths. Vertices order
-// [SW, SE, NE, NW] so engine edges stay South=0/East=1/North=2/West=3.
+// Reconstruct the plot quadrilateral (metres) from the 4 side lengths.
+// Anchor: NORTH edge horizontal at the top (y=0); East edge perpendicular (drops down);
+// then solve the SW corner so South & West lengths close exactly — matches a surveyor sketch.
+// Vertices order [SW, SE, NE, NW] => engine edges South=0/East=1/North=2/West=3.
 function reconstructQuad(N, E, S, Wd) {
   if (!(N > 0 && E > 0 && S > 0 && Wd > 0)) return null;
-  const SW = [0, 0], SE = [S, 0];
-  if (Math.abs(N - S) > 0.05) {  // horizontal-top solution honouring all four sides
-    const u = ((E * E - Wd * Wd) / (N - S) - (N - S)) / 2;
-    const h2 = Wd * Wd - u * u;
-    if (h2 > 0.05) { const h = Math.sqrt(h2); return [SW, SE, [u + N, h], [u, h]]; }
+  const NW = [0, 0], NE = [N, 0], SE = [N, -E];          // North across top, East straight down
+  const K = (S * S - Wd * Wd - N * N - E * E) / 2;       // solve SW from |SW-NW|=W and |SW-SE|=S
+  const a = E * E + N * N, b = 2 * K * N, c = K * K - Wd * Wd * E * E;
+  const disc = b * b - 4 * a * c;
+  if (disc >= 0) {
+    const sq = Math.sqrt(disc);
+    const cand = [(-b + sq) / (2 * a), (-b - sq) / (2 * a)]
+      .map(x => [x, (K + N * x) / E]).filter(p => p[1] < 0.01);   // corner must sit below North
+    if (cand.length) { cand.sort((p, q) => p[1] - q[1]); return [cand[0], SE, NE, NW]; }
   }
-  // fallback: trapezoid with vertical sides (honours S, E, W; top ≈ N)
-  return [SW, SE, [S, E], [0, Wd]];
+  return [[0, -Wd], SE, NE, NW];   // fallback (still North-anchored)
 }
 
 function validPlot(b) {
