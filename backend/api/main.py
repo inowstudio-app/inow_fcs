@@ -32,7 +32,7 @@ from fastapi import Response, Form
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
 
-APP_VERSION = "1.2-login"
+APP_VERSION = "1.3-assistant"
 app = FastAPI(title="DCR Feasibility & Compliance System", version=APP_VERSION)
 
 # --- team-only access gate (session cookie + login page; real logout) ---
@@ -70,11 +70,19 @@ if(r.ok){location.href='/';}else{e.textContent='Invalid username or password.';}
 
 @app.middleware("http")
 async def team_gate(request: Request, call_next):
-    if not APP_PASSWORD:
-        return await call_next(request)
     path = request.url.path
+
+    async def proceed():
+        resp = await call_next(request)
+        # never cache the app shell / scripts / styles, so deploys are always fresh
+        if path == "/" or path.endswith((".js", ".css", ".html")):
+            resp.headers["Cache-Control"] = "no-cache, must-revalidate"
+        return resp
+
+    if not APP_PASSWORD:
+        return await proceed()
     if path in _PUBLIC or request.cookies.get("dcr_session") == SESSION_TOKEN:
-        return await call_next(request)
+        return await proceed()
     if path.startswith("/api/"):
         return JSONResponse({"detail": "Authentication required"}, status_code=401)
     return HTMLResponse(LOGIN_HTML, status_code=200)
