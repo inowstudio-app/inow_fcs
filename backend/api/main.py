@@ -30,7 +30,8 @@ from fastapi import Response
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
 
-app = FastAPI(title="DCR Feasibility & Compliance System", version="0.1.0")
+APP_VERSION = "1.1-depthfix"
+app = FastAPI(title="DCR Feasibility & Compliance System", version=APP_VERSION)
 
 # --- team-only access gate (HTTP Basic Auth) ---
 # Enforced ONLY when APP_PASSWORD is set (so local dev stays open).
@@ -112,7 +113,8 @@ class SaveIn(BaseModel):
 @app.get("/api/health")
 def health():
     from engine.amendments import status as amend_status
-    return {"status": "ok", "modules": ["feasibility", "scenarios", "compliance", "projects"],
+    return {"status": "ok", "version": APP_VERSION,
+            "modules": ["feasibility", "scenarios", "compliance", "projects"],
             "rules_loaded": ["Rule 35 (NHR)", "Rule 39 (HR)", "Rule 41 (OSR)", "Rule 49 (Premium FSI)", "Annexure IV (parking)"],
             "amendments_reviewed_through": amend_status()["reviewed_through"]}
 
