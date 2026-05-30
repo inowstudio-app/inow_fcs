@@ -70,6 +70,7 @@ $("#resetBtn").addEventListener("click", () => {
   form.polygon.value = ""; form.parking_area_class.value = ""; form.district.value = ""; form.plot_type.value = "individual";
   ["n", "e", "s", "w"].forEach(d => { $("#road_" + d).checked = false; $("#roadw_" + d).value = ""; $("#roadw_" + d).disabled = true; });
   ["ne", "nw", "se", "sw"].forEach(c => { $("#splay_" + c).checked = false; $("#splayd_" + c).value = ""; $("#splayd_" + c).disabled = true; });
+  if ($("#hasStilt")) $("#hasStilt").checked = false;
   AREA_MANUAL = false; $("#frontNote").textContent = "";
   $("#fmbExtract").hidden = true; $("#fmbPreviewWrap").hidden = true;
   $("#fmbStatus").textContent = "Optional — auto-extracts cadastral details & dimensions.";
@@ -297,6 +298,7 @@ function plotBody() {
   b.sides = { N, E, S, W: Wd };       // metres, for the oriented diagram
   b.front_side = front;               // compass letter of the front (widest road)
   b.splays = collectSplays();         // {NE:metres,...} corner cuts (diagram + area)
+  b.has_stilt = !!($("#hasStilt") && $("#hasStilt").checked);   // open stilt parking floor
   const polyText = form.polygon.value.trim();
   let polygon = null;
   if (polyText) {
@@ -570,6 +572,22 @@ function renderFeasibility() {
     ${am.numeric_overrides_applied.length ? "· applied: " + am.numeric_overrides_applied.join(", ") : ""}
     ${am.pending_review.length ? `· <span style="color:var(--amber)">${am.pending_review.length} older scanned GO(s) pending OCR</span>` : ""}</div>`;
 }
+// Mandatory provisions / approvals / verify-checklist for the selected option.
+function renderObligations(s) {
+  const host = document.getElementById("obligationsBlock");
+  if (!host) return;
+  const ob = s.obligations;
+  if (!ob || !ob.count) { host.innerHTML = ""; return; }
+  const badge = { mandatory: '<span class="ob-b ob-m">Mandatory</span>',
+                  applies: '<span class="ob-b ob-a">Applies</span>',
+                  verify: '<span class="ob-b ob-v">Verify</span>' };
+  const row = i => `<div class="ob-row">${badge[i.status] || ""}<div><b>${i.label}</b> — ${i.text}` +
+    `<div class="ob-rule">${i.rule}</div></div></div>`;
+  const all = ob.mandatory.concat(ob.applies, ob.verify);
+  host.innerHTML = `<h4>Mandatory provisions &amp; approvals <span class="hint">(${ob.count} items)</span></h4>` +
+    all.map(row).join("") +
+    `<div class="hint" style="margin-top:6px">“Verify” items depend on the site / master-plan and must be confirmed with the sanctioning authority — they are not auto-computed.</div>`;
+}
 function selectScenario(idx) {
   const s = LAST.scenarios[idx]; if (!s || !s.feasible) return;
   document.querySelectorAll(".scard").forEach(el => el.classList.toggle("sel", +el.dataset.idx === idx));
@@ -611,6 +629,7 @@ function selectScenario(idx) {
   $("#flags").innerHTML = (s.flags || []).map(f => `<div class="flag">⚠ ${f}</div>`).join("")
     + (s.advisories || []).map(a => `<div class="advis">ⓘ ${a}</div>`).join("");
   $("#citation").textContent = s.rule;
+  renderObligations(s);
   drawOverlay(s, LAST.inputs);
   drawElevation(s, LAST.inputs);
 }

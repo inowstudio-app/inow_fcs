@@ -32,7 +32,10 @@ def run_scenarios(plot: Plot) -> dict:
         p = replace(plot, use=use, dwellings=dwellings, proposed_height_m=height)
         env = compute_envelope(p, bclass, dwellings, height)
         row = {"scenario": name, "use": use, "building_class": bclass, "intended_height_m": height}
-        if not env.get("allowed"):
+        elig = env.get("eligibility") if env.get("allowed") else None
+        if env.get("allowed") and elig and not elig.get("ok"):
+            row.update({"feasible": False, "reason": "; ".join(elig["reasons"])})
+        elif not env.get("allowed"):
             row.update({"feasible": False, "reason": env.get("reason", "not permissible")})
         else:
             mb = env["max_built_up_area_sqm"]
@@ -58,6 +61,7 @@ def run_scenarios(plot: Plot) -> dict:
                 "setbacks_m": env["setbacks_m"],
                 "geometry": env["geometry"],
                 "elevation": env["elevation"],
+                "obligations": env["obligations"],
                 "est_dwelling_units": est_units,
                 "parking": parking,
                 "osr": env["osr"],

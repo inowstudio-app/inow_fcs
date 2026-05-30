@@ -85,6 +85,46 @@ def build_pdf(kind: str, meta: str, result: dict) -> bytes:
                                ("FONTSIZE", (0, 0), (-1, -1), 8), ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#e2e8f0")),
                                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f7fafd")])]))
         el.append(t)
+        # Recommended option: height + FSI + obligations detail
+        scs = result.get("scenarios", [])
+        rec = next((s for s in scs if s.get("scenario") == result.get("recommended") and s.get("feasible")), None)
+        rec = rec or next((s for s in scs if s.get("feasible")), None)
+        if rec:
+            ev = rec.get("elevation", {})
+            el.append(Spacer(1, 8))
+            el.append(Paragraph("Height & built-up — %s" % rec["scenario"], ss["Sec"]))
+            achiev = rec.get("max_built_up_sqm")
+            fperm = rec.get("fsi_permissible_sqm")
+            line = (f"FSI {rec.get('fsi')} permits <b>{fperm} m²</b>; achievable <b>{achiev} m²</b> in "
+                    f"{rec.get('floors')} floor(s)")
+            if rec.get("bound_by"):
+                line += f" (bound by {rec['bound_by']})"
+            el.append(Paragraph(line + ".", ss["Small"]))
+            if ev:
+                el.append(Paragraph(
+                    f"Permissible height {ev.get('max_height_m')} m, counted to the top of the terrace parapet; "
+                    f"lift machine room / stair headroom & water tank are appurtenant and not counted "
+                    f"(Rule 35 Expl.2(iii)). Floor-to-floor assumed {ev.get('floor_height_m')} m.", ss["Small"]))
+            ob = rec.get("obligations")
+            if ob and ob.get("count"):
+                el.append(Spacer(1, 6))
+                el.append(Paragraph("Mandatory provisions & approvals", ss["Sec"]))
+                tag = {"mandatory": "MANDATORY", "applies": "APPLIES", "verify": "VERIFY"}
+                odata = [["Item", "Status", "Requirement", "Rule"]]
+                for it in (ob.get("mandatory", []) + ob.get("applies", []) + ob.get("verify", [])):
+                    odata.append([it["label"], tag.get(it["status"], ""), it["text"], it["rule"]])
+                ot = Table(odata, colWidths=[30 * mm, 18 * mm, 78 * mm, 30 * mm])
+                ostyle = [("BACKGROUND", (0, 0), (-1, 0), BRAND), ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                          ("FONTSIZE", (0, 0), (-1, -1), 7), ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#e2e8f0")),
+                          ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                          ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f7fafd")])]
+                for i, it in enumerate((ob.get("mandatory", []) + ob.get("applies", []) + ob.get("verify", [])), start=1):
+                    c = RED if it["status"] == "mandatory" else (BRAND if it["status"] == "applies" else colors.HexColor("#b97400"))
+                    ostyle.append(("TEXTCOLOR", (1, i), (1, i), c))
+                ot.setStyle(TableStyle(ostyle))
+                el.append(ot)
+                el.append(Paragraph("“Verify” items depend on the site / master-plan and must be confirmed with the "
+                                    "sanctioning authority — not auto-computed.", ss["Small"]))
         am = result.get("amendments", {})
         if am:
             el.append(Spacer(1, 6))

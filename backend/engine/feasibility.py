@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from .parking import estimate_parking
 from .geometry import rect_coords, buildable
 from . import amendments
+from . import obligations
 
 RULES_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "rules")
 
@@ -61,6 +62,7 @@ class Plot:
     plot_type: str = "individual"    # individual | gated (approved-layout)
     district: str | None = None      # for location-specific rules (Build B)
     road_sides: dict | None = None   # {"N":width,"E":width,...} abutting roads (for report)
+    has_stilt: bool = False          # open stilt parking floor (FSI/height-exempt)
 
 
 def _pick(bands, value, key, out):
@@ -178,6 +180,11 @@ def compute_envelope(plot: Plot, building_class: str, dwellings: int, height: fl
                                    "physical_limit": round(physical_bua, 1), "max_floors": e["max_floors"]},
         "parking": parking,
         "elevation": elevation,
+        "obligations": obligations.summarize(obligations.checklist(
+            plot.use, building_class, plot_area, plot.abutting_road_width_m,
+            dwellings, height, e["max_floors"], bua, getattr(plot, "has_stilt", False))),
+        "eligibility": obligations.eligibility(
+            building_class, plot_area, plot.abutting_road_width_m, dwellings, height),
         "osr": osr_requirement(plot_area),
         "premium_fsi": premium_fsi(plot.abutting_road_width_m, fsi_bua, building_class),
         "advisories": amendments.advisories(plot.use, bua, dwellings),

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DCR Feasibility System — Tamil Nadu</title>
-  <link rel="stylesheet" href="style.css?v=30" />
+  <link rel="stylesheet" href="style.css?v=31" />
   <style>
     /* Neufert Data tab */
     .nf-topicbar{display:flex;gap:6px;margin-bottom:6px}
@@ -25,6 +25,12 @@
     /* scenario card: FSI-permissible vs achievable clarity */
     .scard .sc-fsi{font-size:11px;color:#66758a;margin:2px 0 4px;line-height:1.35}
     .scard .sc-fsi .bound{color:#1668b3}
+    /* obligations checklist */
+    #obligationsBlock .ob-row{display:flex;gap:8px;align-items:flex-start;font-size:12px;
+      padding:5px 0;border-top:1px solid #eef2f7;line-height:1.45}
+    #obligationsBlock .ob-rule{color:#9aa7b6;font-size:10.5px;margin-top:1px}
+    .ob-b{flex:0 0 auto;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;color:#fff;white-space:nowrap}
+    .ob-b.ob-m{background:#d94d3a}.ob-b.ob-a{background:#1668b3}.ob-b.ob-v{background:#b97400}
   </style>
 </head>
 <body>
@@ -119,6 +125,8 @@
             <option value="gated">Gated community / approved layout</option>
           </select>
         </label>
+        <label class="ck" style="margin-top:8px"><input type="checkbox" id="hasStilt" />
+          Open stilt parking floor <span class="hint">(FSI- &amp; height-exempt if open on all sides)</span></label>
 
         <details class="adv">
           <summary>Exact plot shape (optional)</summary>
@@ -187,6 +195,7 @@
             </div>
           </div>
         </div>
+        <div class="block" id="obligationsBlock"></div>
         <div class="block amend" id="amendBlock"></div>
         <details class="pending"><summary>Not yet included</summary><ul id="pendingList"></ul></details>
         <p class="disclaimer">Indicative per TNCDBR-2019. Verify with the sanctioning authority before design freeze.</p>
@@ -314,7 +323,7 @@
       </div>
     </section>
   </main>
-  <script src="app.js?v=30"></script>
-  <script src="neufert.js?v=30"></script>
+  <script src="app.js?v=31"></script>
+  <script src="neufert.js?v=31"></script>
 </body>
 </html>
