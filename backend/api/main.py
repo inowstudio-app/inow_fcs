@@ -137,6 +137,9 @@ class ProposalIn(BaseModel):
     built_up_area_sqm: float | None = None
     footprint_area_sqm: float | None = None
     car_parking_provided: int | None = None
+    stilt_area_sqm: float | None = None
+    stilt_enclosed: bool = False
+    ground_rise_m: float = 0.0
 
 
 class ScrutinyIn(BaseModel):
@@ -194,7 +197,9 @@ def compliance(req: ProposalIn):
     prop = Proposal(height_m=req.height_m, dwellings=req.dwellings,
                     front_setback_m=req.front_setback_m, side_setback_m=req.side_setback_m,
                     rear_setback_m=req.rear_setback_m, built_up_area_sqm=req.built_up_area_sqm,
-                    footprint_area_sqm=req.footprint_area_sqm, car_parking_provided=req.car_parking_provided)
+                    footprint_area_sqm=req.footprint_area_sqm, car_parking_provided=req.car_parking_provided,
+                    stilt_area_sqm=req.stilt_area_sqm, stilt_enclosed=req.stilt_enclosed,
+                    ground_rise_m=req.ground_rise_m)
     return check_compliance(plot, prop)
 
 

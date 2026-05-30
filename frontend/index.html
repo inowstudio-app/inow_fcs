@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DCR Feasibility System — Tamil Nadu</title>
-  <link rel="stylesheet" href="style.css?v=31" />
+  <link rel="stylesheet" href="style.css?v=32" />
   <style>
     /* Neufert Data tab */
     .nf-topicbar{display:flex;gap:6px;margin-bottom:6px}
@@ -152,6 +152,12 @@
           <label>Footprint <span class="u" data-ulabel="area"></span> <input id="p_fp" data-u="area" type="number" step="0.1" value="120" /></label>
           <label>Car parks <input id="p_cars" type="number" value="1" /></label>
         </div>
+        <div class="grid3">
+          <label>Stilt parking area <span class="u" data-ulabel="area"></span> <input id="p_stilt" data-u="area" type="number" step="0.1" value="0" /></label>
+          <label>Ground rise (above road) <span class="u" data-ulabel="len"></span> <input id="p_rise" data-u="len" type="number" step="0.1" value="0" /></label>
+          <label class="ck" style="align-self:end"><input type="checkbox" id="p_stiltEnc" /> Stilt enclosed</label>
+        </div>
+        <p class="hint">Open stilt parking is excluded from FSI (Rule 29(5)); enclosing it makes it count (Rule 35.10). Total height = building height + ground rise, checked vs the permissible max.</p>
       </div>
 
       <button id="primaryBtn" class="run">Analyse this plot →</button>
@@ -323,7 +329,7 @@
       </div>
     </section>
   </main>
-  <script src="app.js?v=31"></script>
-  <script src="neufert.js?v=31"></script>
+  <script src="app.js?v=32"></script>
+  <script src="neufert.js?v=32"></script>
 </body>
 </html>

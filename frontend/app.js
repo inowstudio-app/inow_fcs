@@ -71,6 +71,8 @@ $("#resetBtn").addEventListener("click", () => {
   ["n", "e", "s", "w"].forEach(d => { $("#road_" + d).checked = false; $("#roadw_" + d).value = ""; $("#roadw_" + d).disabled = true; });
   ["ne", "nw", "se", "sw"].forEach(c => { $("#splay_" + c).checked = false; $("#splayd_" + c).value = ""; $("#splayd_" + c).disabled = true; });
   if ($("#hasStilt")) $("#hasStilt").checked = false;
+  ["p_stilt", "p_rise"].forEach(n => { if ($("#" + n)) $("#" + n).value = "0"; });
+  if ($("#p_stiltEnc")) $("#p_stiltEnc").checked = false;
   AREA_MANUAL = false; $("#frontNote").textContent = "";
   $("#fmbExtract").hidden = true; $("#fmbPreviewWrap").hidden = true;
   $("#fmbStatus").textContent = "Optional — auto-extracts cadastral details & dimensions.";
@@ -362,6 +364,9 @@ async function runCompliance() {
     front_setback_m: toM(+$("#p_front").value, "len"), side_setback_m: toM(+$("#p_side").value, "len"),
     rear_setback_m: toM(+$("#p_rear").value, "len"), built_up_area_sqm: toM(+$("#p_bua").value, "area"),
     footprint_area_sqm: toM(+$("#p_fp").value, "area"), car_parking_provided: +$("#p_cars").value,
+    stilt_area_sqm: toM(+($("#p_stilt") ? $("#p_stilt").value : 0), "area"),
+    stilt_enclosed: !!($("#p_stiltEnc") && $("#p_stiltEnc").checked),
+    ground_rise_m: toM(+($("#p_rise") ? $("#p_rise").value : 0), "len"),
   };
   const r = await fetch("/api/compliance", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!r.ok) return alert("Error: " + await r.text());
@@ -520,7 +525,12 @@ async function downloadPdf(kind) {
   const result = map[kind];
   if (!result) return alert("Run the analysis first.");
   const meta = kind === "feasibility" ? $("#rhMeta").textContent : kind === "compliance" ? $("#cMeta").textContent : $("#scMeta").textContent;
-  const r = await fetch("/api/report/pdf", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, meta, result }) });
+  // attach the on-screen diagrams so the PDF matches the screen
+  const grab = id => { const s = document.getElementById(id); return s ? s.outerHTML : null; };
+  const planId = kind === "compliance" ? null : "overlay";
+  const diagrams = { plan: planId ? grab(planId) : null, elevation: kind === "feasibility" ? grab("elevation") : null };
+  const payload = Object.assign({}, result, { diagrams });
+  const r = await fetch("/api/report/pdf", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, meta, result: payload }) });
   if (!r.ok) return alert("PDF error: " + await r.text());
   const blob = await r.blob(), url = URL.createObjectURL(blob);
   const a = document.createElement("a"); a.href = url; a.download = `DCR_${kind}_report.pdf`; a.click();
@@ -651,6 +661,35 @@ function renderCompliance() {
       <td>${c.item}</td><td>${c.required != null ? fmtByUnit(c.required, c.unit || "m") : "—"}</td>
       <td>${c.proposed != null ? fmtByUnit(c.proposed, c.unit || "m") : "—"}</td>
       <td><b>${c.status.replace("_", " ")}</b></td></tr>`).join("");
+  // height breakdown + stilt FSI treatment + obligations
+  let extra = "";
+  const h = LASTC.height;
+  if (h) {
+    extra += `<div class="block"><h4>Height check</h4>
+      <div class="row2"><span>Building height</span><b>${fmtLen(h.building_height_m, false)}</b></div>
+      <div class="row2"><span>Ground rise above road</span><b>${fmtLen(h.ground_rise_m, false)}</b></div>
+      <div class="row2"><span>Total height</span><b>${fmtLen(h.total_height_m, false)}</b></div>
+      <div class="row2"><span>Permissible max</span><b>${fmtLen(h.max_height_m, false)}</b></div>
+      <div class="hint">${h.note}</div></div>`;
+  }
+  const st = LASTC.stilt;
+  if (st) {
+    extra += `<div class="block"><h4>Stilt / FSI treatment</h4>
+      <div class="row2"><span>Stilt parking area</span><b>${fmtArea(st.area_sqm, false)}</b></div>
+      <div class="row2"><span>Counts in FSI?</span><b>${st.counts_in_fsi ? "Yes (enclosed)" : "No (open)"}</b></div>
+      <div class="row2"><span>FSI-countable built-up</span><b>${fmtArea(st.countable_bua_sqm, false)}</b></div>
+      <div class="row2"><span>FSI used / max</span><b>${st.fsi_used} / ${st.fsi_max}</b></div>
+      <div class="hint">${st.rule}</div></div>`;
+  }
+  const ob = LASTC.obligations;
+  if (ob && ob.count) {
+    const badge = { mandatory: '<span class="ob-b ob-m">Mandatory</span>', applies: '<span class="ob-b ob-a">Applies</span>', verify: '<span class="ob-b ob-v">Verify</span>' };
+    extra += `<div class="block"><h4>Mandatory provisions &amp; approvals <span class="hint">(${ob.count})</span></h4>` +
+      ob.mandatory.concat(ob.applies, ob.verify).map(i => `<div class="ob-row">${badge[i.status] || ""}<div><b>${i.label}</b> — ${i.text}<div class="ob-rule">${i.rule}</div></div></div>`).join("") + `</div>`;
+  }
+  let host = document.getElementById("compExtra");
+  if (!host) { host = document.createElement("div"); host.id = "compExtra"; $("#checksTable").after(host); }
+  host.innerHTML = extra;
 }
 
 // ===== projects (browser localStorage — survives refresh / logout / redeploy) =====
@@ -846,7 +885,9 @@ function drawElevation(s, inputs) {
   // regulated max-height cap line (to terrace/parapet level)
   const capY = groundY - counted * sc;
   o += `<line x1="${x0 - 10}" y1="${capY}" x2="${x0 + frontage * sc + 10}" y2="${capY}" stroke="#b97400" stroke-width="1.3" stroke-dasharray="5,4"/>`;
-  o += T(x0 + frontage * sc + 8, capY + 4, "max " + fmtLen(counted, false), "#b97400", "600", 10, "start");
+  // cap label on its own line ABOVE the dashes (never overlaps the bldg or other text)
+  o += `<rect x="${x0 - 10}" y="${capY - 15}" width="${(("Max permissible " + fmtLen(counted, false)).length) * 5.4 + 8}" height="13" fill="#fff" opacity="0.85"/>`;
+  o += T(x0 - 6, capY - 5, "Max permissible " + fmtLen(counted, false), "#b97400", "700", 10, "start");
   // built-height bracket (left)
   o += `<line x1="${padL - 16}" y1="${groundY}" x2="${padL - 16}" y2="${terraceY}" stroke="#66758a" stroke-width="1"/>`;
   o += `<line x1="${padL - 20}" y1="${groundY}" x2="${padL - 12}" y2="${groundY}" stroke="#66758a" stroke-width="1"/>`;
