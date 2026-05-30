@@ -805,7 +805,7 @@ function drawElevation(s, inputs) {
   if (!ev || !ev.floor_areas_sqm || !ev.floor_areas_sqm.length) {
     svg.innerHTML = ""; if (note) note.textContent = ""; return;
   }
-  const VBW = 420, VBH = 460, padL = 54, padR = 26, padTop = 30, padBot = 52;
+  const VBW = 460, VBH = 480, padL = 50, padR = 78, padTop = 54, padBot = 54;  // viewBox matches the plan (#overlay) so both panels render the same height
   const sb = s.setbacks_m || {}, sd = inputs.sides || {};
   const frontKey = inputs.front_side || "N";
   const frontage = (sd[frontKey] || inputs.width_m || Math.sqrt(inputs.area_sqm || 1)) || 1;
@@ -828,7 +828,8 @@ function drawElevation(s, inputs) {
     `<text x="${x}" y="${y}" text-anchor="${anc}" font-size="${fs}" fill="${fill}" font-weight="${fw}">${t}</text>`;
 
   let o = `<rect x="0" y="0" width="${VBW}" height="${VBH}" fill="#fbfcfe"/>`;
-  o += T(VBW / 2, 19, s.scenario + " — front elevation", "#0f4c84", "700", 12.5);
+  o += T(VBW / 2, 20, s.scenario + " — front elevation", "#0f4c84", "700", 13);
+  o += `<line x1="16" y1="${padTop - 6}" x2="${VBW - 16}" y2="${padTop - 6}" stroke="#eef2f7" stroke-width="1"/>`;
   // ground line
   o += `<line x1="${x0 - 10}" y1="${groundY}" x2="${x0 + frontage * sc + 10}" y2="${groundY}" stroke="#334155" stroke-width="2"/>`;
   o += T(cx, groundY + 30, "frontage " + fmtLen(frontage, false), "#66758a", "400", 11);
@@ -850,7 +851,7 @@ function drawElevation(s, inputs) {
     const fyTop = groundY - (i + 1) * floorH * sc, h = floorH * sc;
     const stepped = ratio < 0.985;
     o += `<rect x="${fx}" y="${fyTop}" width="${wpx}" height="${h - 1.5}" fill="${stepped ? "rgba(185,116,0,.16)" : "rgba(31,157,92,.16)"}" stroke="${stepped ? "#b97400" : "#1f9d5c"}" stroke-width="1.3"/>`;
-    o += T(cx, fyTop + h / 2 + 3.5, (i === 0 ? "GF" : "F" + i) + " · " + fmtArea(areas[i], false), "#1d2733", "400", h > 22 ? 10.5 : 9);
+    if (h >= 13) o += T(cx, fyTop + h / 2 + 3.5, (i === 0 ? "GF" : "F" + i) + " · " + fmtArea(areas[i], false), "#1d2733", "400", h > 22 ? 10.5 : 9);
   }
   // parapet on terrace
   const terraceY = groundY - builtH * sc;
@@ -862,10 +863,9 @@ function drawElevation(s, inputs) {
   if (headroom > 0.5 && fp > 0) {
     const fsiEquivH = ((achievBUA + headroom) / fp) * floorH;   // height if full FSI built at this footprint
     let fsiY = groundY - fsiEquivH * sc;
-    if (fsiY < padTop + 8) fsiY = padTop + 8;
+    if (fsiY < padTop + 4) fsiY = padTop + 4;
     o += `<rect x="${bx}" y="${fsiY}" width="${bW}" height="${terraceY - fsiY}" fill="rgba(185,116,0,.12)" stroke="#b97400" stroke-width="1" stroke-dasharray="4,3"/>`;
-    o += `<line x1="${x0 - 6}" y1="${fsiY}" x2="${x0 + frontage * sc + 6}" y2="${fsiY}" stroke="#b97400" stroke-width="1" stroke-dasharray="4,3"/>`;
-    o += T(cx, fsiY - 4, "FSI permits +" + fmtArea(headroom, false) + " (blocked by GF+2F cap)", "#8a5a00", "600", 9);
+    if (terraceY - fsiY > 16) o += T(cx, (fsiY + terraceY) / 2 + 3, "FSI headroom +" + fmtArea(headroom, false), "#8a5a00", "600", 9);
   }
   const parH = PARAPET * sc;
   o += `<rect x="${bx}" y="${terraceY - parH}" width="${bW}" height="${parH}" fill="rgba(51,65,85,.14)" stroke="#334155" stroke-width="1"/>`;
@@ -892,10 +892,10 @@ function drawElevation(s, inputs) {
   o += `<line x1="${padL - 16}" y1="${groundY}" x2="${padL - 16}" y2="${terraceY}" stroke="#66758a" stroke-width="1"/>`;
   o += `<line x1="${padL - 20}" y1="${groundY}" x2="${padL - 12}" y2="${groundY}" stroke="#66758a" stroke-width="1"/>`;
   o += `<line x1="${padL - 20}" y1="${terraceY}" x2="${padL - 12}" y2="${terraceY}" stroke="#66758a" stroke-width="1"/>`;
-  o += `<g transform="translate(${padL - 24},${(groundY + terraceY) / 2}) rotate(-90)">${T(0, 0, fmtLen(builtH, false) + " to terrace", "#66758a", "400", 9.5)}</g>`;
-  // achievable-vs-FSI legend strip under the title
+  o += `<g transform="translate(${padL - 26},${(groundY + terraceY) / 2}) rotate(-90)">${T(0, 0, fmtLen(builtH, false) + " to terrace", "#66758a", "400", 9)}</g>`;
+  // achievable-vs-FSI sub-title in the reserved header band (above the separator)
   const achTot = areas.reduce((a, b) => a + b, 0);
-  o += T(VBW / 2, 33, "Achievable " + fmtArea(achTot, false) + " (" + nF + " fl)"
+  o += T(VBW / 2, 38, "Achievable " + fmtArea(achTot, false) + " (" + nF + " fl)"
     + (ev.fsi_headroom_sqm > 0.5 ? "  ·  FSI permits " + fmtArea(achTot + ev.fsi_headroom_sqm, false) : "  ·  FSI fully used"),
     "#46586b", "400", 10);
   svg.setAttribute("viewBox", `0 0 ${VBW} ${VBH}`);
