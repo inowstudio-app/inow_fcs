@@ -29,14 +29,42 @@ def _styles():
     return ss
 
 
+def _svg_for_pdf(svg: str) -> str:
+    """PyMuPDF's SVG renderer doesn't understand rgba()/opacity and treats unknown
+    fills as black. Flatten every rgba(r,g,b,a) to a solid hex blended over white,
+    and guarantee a white background rect so transparent areas don't render black."""
+    import re
+
+    def blend(m):
+        r, g, b, a = float(m.group(1)), float(m.group(2)), float(m.group(3)), float(m.group(4))
+        r = round(r * a + 255 * (1 - a)); g = round(g * a + 255 * (1 - a)); b = round(b * a + 255 * (1 - a))
+        return f"#{r:02x}{g:02x}{b:02x}"
+
+    s = re.sub(r"rgba\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)", blend, svg)
+    # strip fill-opacity / opacity attrs fitz may mishandle
+    s = re.sub(r'\s(fill|stroke)-opacity="[^"]*"', "", s)
+    # white background: pull viewBox dims, inject a covering rect right after <svg ...>
+    vb = re.search(r'viewBox="([\d.\-\s]+)"', s)
+    if vb:
+        p = vb.group(1).split()
+        x, y, w, h = (p + ["0", "0", "800", "600"])[:4]
+    else:
+        x, y, w, h = "0", "0", "800", "600"
+    if "data-pdfbg" not in s:
+        bg = f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="#ffffff" data-pdfbg="1"/>'
+        s = re.sub(r"(<svg\b[^>]*>)", r"\1" + bg, s, count=1)
+    return s
+
+
 def _svg_to_image(svg: str, max_w_mm: float, max_h_mm: float):
     """Rasterise an SVG string to a reportlab Image, scaled to fit a box (mm)."""
     if not svg or "<svg" not in svg:
         return None
     try:
         import fitz
-        doc = fitz.open(stream=svg.encode("utf-8"), filetype="svg")
-        pix = doc[0].get_pixmap(dpi=150)
+        clean = _svg_for_pdf(svg)
+        doc = fitz.open(stream=clean.encode("utf-8"), filetype="svg")
+        pix = doc[0].get_pixmap(dpi=150, alpha=False)
         png = pix.tobytes("png")
         iw, ih = pix.width, pix.height
         scale = min((max_w_mm * mm) / iw, (max_h_mm * mm) / ih)
