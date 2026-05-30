@@ -546,9 +546,12 @@ function renderFeasibility() {
     const rec = s.scenario === LAST.recommended;
     if (!s.feasible) return `<div class="scard no"><div class="sc-name">${s.scenario}</div><div class="sc-no">✕ ${s.reason}</div></div>`;
     const u = s.est_dwelling_units != null ? `${s.est_dwelling_units} units` : "—";
+    const fsiPerm = s.fsi_permissible_sqm != null ? fmtArea(s.fsi_permissible_sqm, false) : "—";
+    const boundNote = s.bound_by === "FSI cap" ? "FSI-limited" : "capped by floors/setbacks";
     return `<div class="scard ${rec ? "rec" : ""}" data-idx="${idx}">${rec ? '<div class="rec-badge">★ Recommended</div>' : ""}
       <div class="sc-name">${s.scenario}</div><div class="sc-big">${fmtArea(s.max_built_up_sqm)}</div>
-      <div class="sc-sub">max built-up · FSI ${s.fsi}</div>
+      <div class="sc-sub">achievable built-up · ${s.floors} floors</div>
+      <div class="sc-fsi">FSI ${s.fsi} permits ${fsiPerm} <span class="bound">· ${boundNote}</span></div>
       <div class="sc-row"><span>${s.floors} fl</span><span>${u}</span><span>${s.parking.car_spaces} cars</span></div></div>`;
   }).join("");
   let sn = document.getElementById("siteNotes");
@@ -573,7 +576,8 @@ function selectScenario(idx) {
   $("#detailTitle").textContent = "Selected — " + s.scenario;
   const sb = s.setbacks_m, pk = s.parking, pr = s.premium_fsi, osr = s.osr;
   $("#kpis").innerHTML = [
-    kpi(fmtArea(s.max_built_up_sqm), "Max built-up", `FSI ${s.fsi} · ${s.floors} floors`),
+    kpi(fmtArea(s.max_built_up_sqm), "Achievable built-up", `${s.floors} floors · ${s.bound_by === "FSI cap" ? "FSI-limited" : "floors/setbacks-limited"}`),
+    kpi(s.fsi_permissible_sqm != null ? fmtArea(s.fsi_permissible_sqm) : "—", "FSI permissible", `plot × FSI ${s.fsi}`),
     kpi(s.est_dwelling_units != null ? s.est_dwelling_units : "—", "Est. units", ""),
     kpi(fmtArea(s.footprint_sqm), "Footprint", `${s.coverage_pct}% coverage`),
     kpi(fmtLen(sb.front), "Front SB", ""), kpi(fmtLen(sb.side), "Side SB", sb.side_applies), kpi(fmtLen(sb.rear), "Rear SB", ""),

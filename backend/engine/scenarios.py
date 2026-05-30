@@ -35,7 +35,12 @@ def run_scenarios(plot: Plot) -> dict:
         if not env.get("allowed"):
             row.update({"feasible": False, "reason": env.get("reason", "not permissible")})
         else:
-            bua = env["max_built_up_area_sqm"]["governing"]
+            mb = env["max_built_up_area_sqm"]
+            bua = mb["governing"]                       # achievable = min(FSI cap, footprint x floors)
+            fsi_perm = mb["fsi_limit"]                  # FSI entitlement = plot area x FSI
+            phys = mb["physical_limit"]                 # footprint x max floors
+            # name the binding constraint so the two numbers are never ambiguous
+            bound_by = "FSI cap" if fsi_perm <= phys + 1e-6 else "height & setbacks"
             # clamp BUA-based unit estimate to the candidate's dwelling count
             est_units = min(dwellings, _units_from_bua(bua)) if use == "residential" else None
             # parking based on the estimated yield so BUA/units/parking stay coherent
@@ -44,6 +49,9 @@ def run_scenarios(plot: Plot) -> dict:
             row.update({
                 "feasible": True, "rule": env["rule"], "fsi": env["fsi"],
                 "max_built_up_sqm": bua,
+                "fsi_permissible_sqm": fsi_perm,
+                "physical_limit_sqm": phys,
+                "bound_by": bound_by,
                 "footprint_sqm": env["buildable_footprint"]["area_sqm"],
                 "coverage_pct": env["buildable_footprint"]["coverage_pct"],
                 "floors": env["max_built_up_area_sqm"]["max_floors"],
