@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DCR Feasibility System — Tamil Nadu</title>
-  <link rel="stylesheet" href="style.css?v=27" />
+  <link rel="stylesheet" href="style.css?v=28" />
   <style>
     /* Neufert Data tab */
     .nf-topicbar{display:flex;gap:6px;margin-bottom:6px}
@@ -169,8 +169,14 @@
           <div class="kpis" id="kpis"></div>
           <div class="detail-grid">
             <div class="overlay-wrap">
+              <div class="ov-title">Plan — setbacks &amp; buildable</div>
               <svg id="overlay" viewBox="0 0 420 460" preserveAspectRatio="xMidYMid meet"></svg>
               <div class="legend"><span><i class="sw plot"></i> Plot</span><span><i class="sw setback"></i> Setback</span><span><i class="sw build"></i> Buildable</span></div>
+            </div>
+            <div class="overlay-wrap">
+              <div class="ov-title">Elevation — max height &amp; floors</div>
+              <svg id="elevation" viewBox="0 0 420 460" preserveAspectRatio="xMidYMid meet"></svg>
+              <div class="legend"><span><i class="sw build"></i> Floor plate</span><span><i class="sw setback"></i> Setback gap</span><span style="color:#b97400">┄ Max height cap</span></div>
             </div>
             <div class="detail-side">
               <div class="block" id="upsideBlock"></div>
@@ -307,7 +313,7 @@
       </div>
     </section>
   </main>
-  <script src="app.js?v=27"></script>
-  <script src="neufert.js?v=27"></script>
+  <script src="app.js?v=28"></script>
+  <script src="neufert.js?v=28"></script>
 </body>
 </html>

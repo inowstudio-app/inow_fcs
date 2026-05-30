@@ -57,6 +57,7 @@ def run_scenarios(plot: Plot) -> dict:
                 "floors": env["max_built_up_area_sqm"]["max_floors"],
                 "setbacks_m": env["setbacks_m"],
                 "geometry": env["geometry"],
+                "elevation": env["elevation"],
                 "est_dwelling_units": est_units,
                 "parking": parking,
                 "osr": env["osr"],

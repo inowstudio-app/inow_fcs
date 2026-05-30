@@ -95,6 +95,7 @@ def _envelope_non_high_rise(plot: Plot, dwellings: int, height: float) -> dict:
     return {"rule": "TNCDBR-2019 Rule 35 (" + cat["id"] + ")", "fsi": cat["fsi_max"],
             "fsb": fsb, "ssb": ssb, "side_applies": sides, "rsb": rsb,
             "max_coverage_pct": None, "flags": flags,
+            "max_height_m": 14.0 if cat["id"] == "35.1.a" else 18.30,
             "max_floors": 3 if cat["id"] == "35.1.a" else max(1, int(height // 3.0))}
 
 
@@ -112,7 +113,7 @@ def _envelope_high_rise(plot: Plot, height: float) -> dict:
         sb = min(20.0, sb + math.ceil((height - 30) / 6.0))
     return {"rule": "TNCDBR-2019 Rule 39", "fsi": fsi, "fsb": sb, "ssb": sb, "side_applies": "either",
             "rsb": sb, "max_coverage_pct": r["max_coverage_pct"], "flags": flags, "allowed": True,
-            "max_floors": max(1, int(height // 3.0))}
+            "max_height_m": height, "max_floors": max(1, int(height // 3.0))}
 
 
 # ---------- Generic envelope computation ----------
@@ -144,6 +145,28 @@ def compute_envelope(plot: Plot, building_class: str, dwellings: int, height: fl
     parking = estimate_parking(plot.use, bua, dwellings, plot.parking_area_class)
     flags = list(e["flags"]) + ([cov_flag] if cov_flag else [])
 
+    # --- floor stack for the elevation: fill full floors bottom-up until the
+    # governing BUA is used; the top floor steps back only if FSI is the binding
+    # limit (footprint x floors > FSI cap). Deterministic, proportional. ---
+    FLOOR_HEIGHT_M = 3.0
+    floor_areas = []
+    rem = bua
+    for _ in range(e["max_floors"]):
+        a = min(footprint, rem)
+        if a <= 0.5:
+            break
+        floor_areas.append(round(a, 2))
+        rem -= a
+    elevation = {
+        "max_height_m": e.get("max_height_m", e["max_floors"] * FLOOR_HEIGHT_M),
+        "floor_height_m": FLOOR_HEIGHT_M,
+        "built_height_m": round(len(floor_areas) * FLOOR_HEIGHT_M, 2),
+        "footprint_sqm": round(footprint, 2),
+        "floor_areas_sqm": floor_areas,
+        "top_stepped": len(floor_areas) > 1 and floor_areas[-1] < floor_areas[0] - 0.5,
+        "fsi_headroom_sqm": round(max(0.0, fsi_bua - bua), 1),
+    }
+
     return {
         "allowed": True, "building_class": building_class, "rule": e["rule"], "fsi": e["fsi"],
         "height_m": height, "dwellings": dwellings,
@@ -154,6 +177,7 @@ def compute_envelope(plot: Plot, building_class: str, dwellings: int, height: fl
         "max_built_up_area_sqm": {"governing": round(bua, 1), "fsi_limit": round(fsi_bua, 1),
                                    "physical_limit": round(physical_bua, 1), "max_floors": e["max_floors"]},
         "parking": parking,
+        "elevation": elevation,
         "osr": osr_requirement(plot_area),
         "premium_fsi": premium_fsi(plot.abutting_road_width_m, fsi_bua, building_class),
         "advisories": amendments.advisories(plot.use, bua, dwellings),

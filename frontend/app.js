@@ -597,6 +597,7 @@ function selectScenario(idx) {
     + (s.advisories || []).map(a => `<div class="advis">ⓘ ${a}</div>`).join("");
   $("#citation").textContent = s.rule;
   drawOverlay(s, LAST.inputs);
+  drawElevation(s, LAST.inputs);
 }
 
 // ===== render compliance =====
