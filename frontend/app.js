@@ -585,10 +585,25 @@ function selectScenario(idx) {
   const plotArea = LAST.inputs.area_sqm || 0;
   const gfArea = s.footprint_sqm || 0;                 // ground-floor buildable (after setbacks)
   const setbackArea = Math.max(0, plotArea - gfArea);  // open/setback area
+  const roadM = (LAST.inputs && LAST.inputs.abutting_road_width_m) || 0;
+  const htBands = [
+    { lo: 0, hi: 9, label: "Below 9 m", h: "&le;14 m · GF+2F (&le;16 dwellings)" },
+    { lo: 9, hi: 12, label: "9 – 12 m", h: "&le;18.3 m (Rule 35.1.b, &gt;16 dwellings)" },
+    { lo: 12, hi: 18, label: "12 – 18 m", h: "High-rise &gt;18.3 m (Rule 39)" },
+    { lo: 18, hi: Infinity, label: "18 m and above", h: "High-rise + higher FSI / Premium (Rule 49)" },
+  ];
+  const htRows = htBands.map(b => {
+    const on = roadM >= b.lo && roadM < b.hi;
+    return `<div class="row2"${on ? ' style="background:#eef3fb;border-radius:6px;padding:3px 6px"' : ''}>` +
+      `<span>${b.label}${on ? ' <b style="color:#1668b3">◀ this plot</b>' : ''}</span><b>${b.h}</b></div>`;
+  }).join("");
   $("#upsideBlock").innerHTML = `<h4>Ground floor (after setbacks)</h4>
     <div class="row2"><span>GF buildable footprint</span><b>${fmtArea(gfArea)}</b></div>
     <div class="row2"><span>Setback / open area</span><b>${fmtArea(setbackArea)}</b></div>
     <div class="row2"><span>Ground coverage</span><b>${s.coverage_pct}%</b></div>
+    <h4 style="margin-top:12px">Permissible height vs road width <span class="hint">(road ${fmtLen(roadM, false)})</span></h4>
+    ${htRows}
+    <div class="hint" style="margin-top:6px;line-height:1.5">Non-high-rise height is set by category (Rule 35): &le;14 m for &le;16 dwellings (GF+2F), &le;18.3 m for &gt;16 dwellings (needs road &ge;9 m). Buildings &gt;18.3 m are high-rise (Rule 39, road &ge;12 m); FSI rises with road width. Road width also fixes the front setback (${fmtLen(sb.front, false)} here).</div>
     <h4 style="margin-top:12px">Upside &amp; obligations</h4>
     <div class="row2"><span>Premium FSI (Rule 49)</span><b>${pr.premium_pct ? "+" + pr.premium_pct + "% = " + fmtArea(pr.upside_sqm) : "—"}</b></div>
     <div class="row2"><span>OSR reqd (Rule 41)</span><b>${osr.required_sqm ? fmtArea(osr.required_sqm) + " (" + osr.pct + "%)" : "Nil"}</b></div>`;
@@ -781,6 +796,19 @@ function drawElevation(s, inputs) {
   }
   // parapet on terrace
   const terraceY = groundY - builtH * sc;
+  // --- FSI differential: the floor-area FSI permits but the floor/height cap blocks ---
+  // (drawn before parapet/appurtenances so they sit on top). Achievable floors already
+  // sum to the achievable BUA; this dashed band shows the unbuilt FSI headroom above.
+  const achievBUA = areas.reduce((a, b) => a + b, 0);
+  const headroom = ev.fsi_headroom_sqm || 0;
+  if (headroom > 0.5 && fp > 0) {
+    const fsiEquivH = ((achievBUA + headroom) / fp) * floorH;   // height if full FSI built at this footprint
+    let fsiY = groundY - fsiEquivH * sc;
+    if (fsiY < padTop + 8) fsiY = padTop + 8;
+    o += `<rect x="${bx}" y="${fsiY}" width="${bW}" height="${terraceY - fsiY}" fill="rgba(185,116,0,.12)" stroke="#b97400" stroke-width="1" stroke-dasharray="4,3"/>`;
+    o += `<line x1="${x0 - 6}" y1="${fsiY}" x2="${x0 + frontage * sc + 6}" y2="${fsiY}" stroke="#b97400" stroke-width="1" stroke-dasharray="4,3"/>`;
+    o += T(cx, fsiY - 4, "FSI permits +" + fmtArea(headroom, false) + " (blocked by GF+2F cap)", "#8a5a00", "600", 9);
+  }
   const parH = PARAPET * sc;
   o += `<rect x="${bx}" y="${terraceY - parH}" width="${bW}" height="${parH}" fill="rgba(51,65,85,.14)" stroke="#334155" stroke-width="1"/>`;
   o += T(bx + bW + 4, terraceY - parH / 2 + 3, "parapet", "#66758a", "400", 9, "start");
@@ -805,6 +833,11 @@ function drawElevation(s, inputs) {
   o += `<line x1="${padL - 20}" y1="${groundY}" x2="${padL - 12}" y2="${groundY}" stroke="#66758a" stroke-width="1"/>`;
   o += `<line x1="${padL - 20}" y1="${terraceY}" x2="${padL - 12}" y2="${terraceY}" stroke="#66758a" stroke-width="1"/>`;
   o += `<g transform="translate(${padL - 24},${(groundY + terraceY) / 2}) rotate(-90)">${T(0, 0, fmtLen(builtH, false) + " to terrace", "#66758a", "400", 9.5)}</g>`;
+  // achievable-vs-FSI legend strip under the title
+  const achTot = areas.reduce((a, b) => a + b, 0);
+  o += T(VBW / 2, 33, "Achievable " + fmtArea(achTot, false) + " (" + nF + " fl)"
+    + (ev.fsi_headroom_sqm > 0.5 ? "  ·  FSI permits " + fmtArea(achTot + ev.fsi_headroom_sqm, false) : "  ·  FSI fully used"),
+    "#46586b", "400", 10);
   svg.setAttribute("viewBox", `0 0 ${VBW} ${VBH}`);
   svg.innerHTML = o;
 
