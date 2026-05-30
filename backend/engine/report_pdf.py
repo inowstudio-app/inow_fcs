@@ -43,6 +43,16 @@ def _svg_for_pdf(svg: str) -> str:
     s = re.sub(r"rgba\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)", blend, svg)
     # strip fill-opacity / opacity attrs fitz may mishandle
     s = re.sub(r'\s(fill|stroke)-opacity="[^"]*"', "", s)
+
+    # thin strokes (1-2 px) drop out when fitz rasterises — floor every stroke-width
+    # to >=1.6 so all borders (incl. thin vertical edges) survive.
+    def bump(m):
+        try:
+            w = float(m.group(1))
+        except ValueError:
+            return m.group(0)
+        return f'stroke-width="{max(w, 1.6)}"'
+    s = re.sub(r'stroke-width="([\d.]+)"', bump, s)
     # white background: pull viewBox dims, inject a covering rect right after <svg ...>
     vb = re.search(r'viewBox="([\d.\-\s]+)"', s)
     if vb:
@@ -64,7 +74,7 @@ def _svg_to_image(svg: str, max_w_mm: float, max_h_mm: float):
         import fitz
         clean = _svg_for_pdf(svg)
         doc = fitz.open(stream=clean.encode("utf-8"), filetype="svg")
-        pix = doc[0].get_pixmap(dpi=150, alpha=False)
+        pix = doc[0].get_pixmap(dpi=300, alpha=False)   # high DPI so thin strokes survive
         png = pix.tobytes("png")
         iw, ih = pix.width, pix.height
         scale = min((max_w_mm * mm) / iw, (max_h_mm * mm) / ih)
