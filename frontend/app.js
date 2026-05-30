@@ -721,4 +721,102 @@ function drawOverlay(s, inputs) {
   svg.innerHTML = o;
 }
 
+// Proportional front elevation: floor plates stacked to scale + parapet + roof
+// appurtenances (lift machine room, water tank). Heights in real metres; facade
+// width = frontage - side setbacks. Top floor steps back only when FSI binds.
+function drawElevation(s, inputs) {
+  const svg = document.getElementById("elevation");
+  if (!svg) return;
+  const note = document.getElementById("heightNote");
+  const ev = s.elevation;
+  if (!ev || !ev.floor_areas_sqm || !ev.floor_areas_sqm.length) {
+    svg.innerHTML = ""; if (note) note.textContent = ""; return;
+  }
+  const VBW = 420, VBH = 460, padL = 54, padR = 26, padTop = 30, padBot = 52;
+  const sb = s.setbacks_m || {}, sd = inputs.sides || {};
+  const frontKey = inputs.front_side || "N";
+  const frontage = (sd[frontKey] || inputs.width_m || Math.sqrt(inputs.area_sqm || 1)) || 1;
+  const sideTotal = (sb.side || 0) * (sb.side_applies === "one" ? 1 : 2);
+  const facadeW = Math.max(0.5, frontage - sideTotal);
+  const floorH = ev.floor_height_m || 3.0;
+  const nF = ev.floor_areas_sqm.length;
+  const builtH = nF * floorH;                          // to terrace slab
+  const PARAPET = 1.0;                                 // typical parapet (m)
+  const APPURT = 2.4;                                  // lift room / tank headroom (m), schematic
+  const counted = Math.max(ev.max_height_m || builtH, builtH); // regulated height ceiling
+  const drawTop = Math.max(counted, builtH + PARAPET + APPURT);  // include roof items in view
+  const fp = ev.footprint_sqm || Math.max(...ev.floor_areas_sqm);
+
+  const sc = Math.min((VBW - padL - padR) / frontage, (VBH - padTop - padBot) / drawTop);
+  const groundY = VBH - padBot;
+  const x0 = padL + ((VBW - padL - padR) - frontage * sc) / 2;
+  const cx = x0 + frontage * sc / 2;
+  const T = (x, y, t, fill = "#46586b", fw = "400", fs = 11, anc = "middle") =>
+    `<text x="${x}" y="${y}" text-anchor="${anc}" font-size="${fs}" fill="${fill}" font-weight="${fw}">${t}</text>`;
+
+  let o = `<rect x="0" y="0" width="${VBW}" height="${VBH}" fill="#fbfcfe"/>`;
+  o += T(VBW / 2, 19, s.scenario + " — front elevation", "#0f4c84", "700", 12.5);
+  // ground line
+  o += `<line x1="${x0 - 10}" y1="${groundY}" x2="${x0 + frontage * sc + 10}" y2="${groundY}" stroke="#334155" stroke-width="2"/>`;
+  o += T(cx, groundY + 30, "frontage " + fmtLen(frontage, false), "#66758a", "400", 11);
+  o += `<line x1="${x0}" y1="${groundY + 13}" x2="${x0 + frontage * sc}" y2="${groundY + 13}" stroke="#9aa7b6" stroke-width="1"/>`;
+
+  const bW = facadeW * sc, bx = cx - bW / 2;
+  // side-setback tint
+  if (sideTotal > 0.05) {
+    const topY = groundY - builtH * sc;
+    if (bx - x0 > 0.5) o += `<rect x="${x0}" y="${topY}" width="${bx - x0}" height="${groundY - topY}" fill="rgba(217,77,58,.08)"/>`;
+    const gR = (x0 + frontage * sc) - (bx + bW);
+    if (gR > 0.5) o += `<rect x="${bx + bW}" y="${topY}" width="${gR}" height="${groundY - topY}" fill="rgba(217,77,58,.08)"/>`;
+  }
+  // floors (bottom-up)
+  const areas = ev.floor_areas_sqm;
+  for (let i = 0; i < nF; i++) {
+    const ratio = Math.max(0.06, Math.min(1, areas[i] / fp));
+    const wpx = facadeW * sc * ratio, fx = cx - wpx / 2;
+    const fyTop = groundY - (i + 1) * floorH * sc, h = floorH * sc;
+    const stepped = ratio < 0.985;
+    o += `<rect x="${fx}" y="${fyTop}" width="${wpx}" height="${h - 1.5}" fill="${stepped ? "rgba(185,116,0,.16)" : "rgba(31,157,92,.16)"}" stroke="${stepped ? "#b97400" : "#1f9d5c"}" stroke-width="1.3"/>`;
+    o += T(cx, fyTop + h / 2 + 3.5, (i === 0 ? "GF" : "F" + i) + " · " + fmtArea(areas[i], false), "#1d2733", "400", h > 22 ? 10.5 : 9);
+  }
+  // parapet on terrace
+  const terraceY = groundY - builtH * sc;
+  const parH = PARAPET * sc;
+  o += `<rect x="${bx}" y="${terraceY - parH}" width="${bW}" height="${parH}" fill="rgba(51,65,85,.14)" stroke="#334155" stroke-width="1"/>`;
+  o += T(bx + bW + 4, terraceY - parH / 2 + 3, "parapet", "#66758a", "400", 9, "start");
+  // roof appurtenances: lift machine room (left) + water tank (right), schematic
+  const appH = APPURT * sc, roofY = terraceY - parH;
+  const lmrW = bW * 0.26, tankW = bW * 0.22;
+  o += `<rect x="${bx + bW * 0.10}" y="${roofY - appH}" width="${lmrW}" height="${appH}" fill="rgba(22,104,179,.14)" stroke="#1668b3" stroke-width="1"/>`;
+  o += T(bx + bW * 0.10 + lmrW / 2, roofY - appH - 4, "lift room /", "#1668b3", "400", 8.5);
+  o += T(bx + bW * 0.10 + lmrW / 2, roofY - appH + appH / 2 + 3, "stair head", "#1668b3", "400", 8);
+  // water tank on short legs
+  const tx = bx + bW * 0.66;
+  o += `<rect x="${tx}" y="${roofY - appH}" width="${tankW}" height="${appH * 0.6}" fill="rgba(22,104,179,.14)" stroke="#1668b3" stroke-width="1"/>`;
+  o += `<line x1="${tx + 3}" y1="${roofY - appH + appH * 0.6}" x2="${tx + 3}" y2="${roofY}" stroke="#1668b3" stroke-width="1"/>`;
+  o += `<line x1="${tx + tankW - 3}" y1="${roofY - appH + appH * 0.6}" x2="${tx + tankW - 3}" y2="${roofY}" stroke="#1668b3" stroke-width="1"/>`;
+  o += T(tx + tankW / 2, roofY - appH - 4, "water tank", "#1668b3", "400", 8.5);
+  // regulated max-height cap line (to terrace/parapet level)
+  const capY = groundY - counted * sc;
+  o += `<line x1="${x0 - 10}" y1="${capY}" x2="${x0 + frontage * sc + 10}" y2="${capY}" stroke="#b97400" stroke-width="1.3" stroke-dasharray="5,4"/>`;
+  o += T(x0 + frontage * sc + 8, capY + 4, "max " + fmtLen(counted, false), "#b97400", "600", 10, "start");
+  // built-height bracket (left)
+  o += `<line x1="${padL - 16}" y1="${groundY}" x2="${padL - 16}" y2="${terraceY}" stroke="#66758a" stroke-width="1"/>`;
+  o += `<line x1="${padL - 20}" y1="${groundY}" x2="${padL - 12}" y2="${groundY}" stroke="#66758a" stroke-width="1"/>`;
+  o += `<line x1="${padL - 20}" y1="${terraceY}" x2="${padL - 12}" y2="${terraceY}" stroke="#66758a" stroke-width="1"/>`;
+  o += `<g transform="translate(${padL - 24},${(groundY + terraceY) / 2}) rotate(-90)">${T(0, 0, fmtLen(builtH, false) + " to terrace", "#66758a", "400", 9.5)}</g>`;
+  svg.setAttribute("viewBox", `0 0 ${VBW} ${VBH}`);
+  svg.innerHTML = o;
+
+  if (note) {
+    const stepTxt = ev.top_stepped
+      ? "Top floor steps back to the FSI cap."
+      : (ev.fsi_headroom_sqm > 0.5 ? "All floors full; FSI headroom " + fmtArea(ev.fsi_headroom_sqm, false) + " unused (height-limited)." : "All floors full at the FSI cap.");
+    note.innerHTML =
+      `<b>Permissible height:</b> ${fmtLen(counted, false)} (Rule 35 ${/35\.1\.a/.test(s.rule) ? "35.1.a — GF+2F" : "35.1.b"}). ` +
+      `Counted to the <b>top of the terrace parapet</b>. ${stepTxt}<br>` +
+      `<b>Top point:</b> lift machine room / stair headroom & water tank sit above the parapet — these are <b>appurtenant, non-habitable</b> and are <b>not counted</b> in building height (TNCDBR-2019 Rule 35 Expl.2(iii); ornamental/service structures permitted up to 30.5 m). Floor-to-floor assumed ${fmtLen(floorH, false)}.`;
+  }
+}
+
 updateUnitLabels();
